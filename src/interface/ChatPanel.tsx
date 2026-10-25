@@ -11,6 +11,7 @@ import { useSceneManager } from '../simulation/SceneContext';
 import { Avatar } from './components/Avatar';
 import { AuditModal } from './AuditModal';
 import { FileSearch } from 'lucide-react';
+import { BRIEF_TEMPLATES } from '../data/briefTemplates';
 
 const ChatPanel: React.FC = () => {
   const {
@@ -205,6 +206,22 @@ const ChatPanel: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Ready-made briefs for the lead before a project starts */}
+      {coreStore.phase === 'idle' && agent.index === activeTeam.leadAgent.index && (BRIEF_TEMPLATES[activeTeam.id]?.length ?? 0) > 0 && (
+        <div className="px-2 pt-2 flex flex-wrap gap-1.5">
+          {BRIEF_TEMPLATES[activeTeam.id].map((t) => (
+            <button
+              key={t.label}
+              onClick={() => setInput(t.text)}
+              title={t.text}
+              className="px-2.5 py-1 rounded-full border border-zinc-200 text-[10px] font-bold text-zinc-500 hover:text-darkDelegation hover:border-zinc-300 transition-colors"
+            >
+              ⚡ {t.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Input */}
       <div className="p-2 border-t border-zinc-50">

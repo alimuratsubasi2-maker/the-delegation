@@ -24,7 +24,7 @@ export const SystemDebugOverlay: React.FC<SystemDebugOverlayProps> = ({ system, 
         className="px-2 py-1 bg-red-50 text-red-500 rounded border border-red-100 text-[8px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center gap-1.5"
       >
         <Code size={10} />
-        Debug System
+        Sistem Hata Ayıklama
       </button>
 
       {isOpen && (

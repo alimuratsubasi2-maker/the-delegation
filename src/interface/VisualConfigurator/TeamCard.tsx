@@ -323,7 +323,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({
           <div className={`flex items-center justify-between mt-auto pt-2 ${isEditing ? 'border-t border-zinc-100/30' : ''}`}>
             <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-50 text-[8px] font-black text-zinc-400 rounded-lg">
               <Users size={10} strokeWidth={3} />
-              {agentCount} {agentCount === 1 ? 'AGENT' : 'AGENTS'}
+              {agentCount} AJAN
             </div>
             <div className="flex items-center gap-2">
               {isActive && !isEditing && (

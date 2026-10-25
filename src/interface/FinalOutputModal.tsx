@@ -3,7 +3,9 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useCoreStore } from '../integration/store/coreStore'
 import { useActiveTeam } from '../integration/store/teamStore'
-import { Loader2, Download } from 'lucide-react'
+import { Loader2, Download, Brain, Clapperboard } from 'lucide-react'
+import { getAllAgents } from '../data/agents'
+import { isObsidianConnected, saveProjectToObsidian, useObsidianStore } from '../core/obsidian/ObsidianBrain'
 import { TeamOutputBadge } from './components/TeamOutputBadge'
 
 export function FinalOutputModal() {
@@ -18,8 +20,35 @@ export function FinalOutputModal() {
   } = useCoreStore()
   const activeTeam = useActiveTeam()
   const [copied, setCopied] = useState(false)
+  const [savedPath, setSavedPath] = useState<string | null>(null)
+  const obsidianStatus = useObsidianStore((s) => s.status)
+  const tasks = useCoreStore((s) => s.tasks)
+  const userBrief = useCoreStore((s) => s.userBrief)
 
   if (!isFinalOutputOpen) return null
+
+  const saveFile = (name: string, text: string) => {
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = name
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }
+  const stamp = new Date().toISOString().slice(0, 10)
+
+  // Script written by the team's scriptwriter, ready for the local OpenMontage video pipeline
+  const scriptAgentIndex = getAllAgents(activeTeam).find((a) => a.id === 'yt-scriptwriter' || a.id === 'shorts-script')?.index
+  const scriptText = tasks.filter((t) => t.assignedAgentId === scriptAgentIndex && t.status === 'done' && t.output).map((t) => t.output).join('\n\n')
+
+  const handleDownloadMd = () => {
+    const parts = tasks.filter((t) => t.status === 'done' && t.output).map((t) => `## ${t.title}\n\n${t.output}`)
+    saveFile(
+      `nova-ofis-${stamp}.md`,
+      `# ${activeTeam.teamName}\n\n**Proje özeti:** ${userBrief}\n\n# Son teslim\n\n${finalOutput || ''}\n\n# Ekip çıktıları\n\n${parts.join('\n\n')}\n`
+    )
+  }
+  const handleSaveObsidian = async () => setSavedPath(await saveProjectToObsidian())
 
   const handleCopy = async () => {
     // We always copy finalOutput which contains the text result or the prompt/metadata
@@ -83,7 +112,7 @@ export function FinalOutputModal() {
           </div>
           <div className="p-4 bg-zinc-100/50 rounded-xl border border-zinc-100/50">
             <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-1">KULLANILAN PROMPT:</p>
-            <p className="text-xs text-zinc-600 italic leading-relaxed">{finalOutput || "No prompt metadata available."}</p>
+            <p className="text-xs text-zinc-600 italic leading-relaxed">{finalOutput || "Prompt bilgisi yok."}</p>
           </div>
         </div>
       );
@@ -107,7 +136,7 @@ export function FinalOutputModal() {
           </div>
           <div className="p-4 bg-zinc-100/50 rounded-xl border border-zinc-100/50">
             <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-1">SÖZLER / PROMPT:</p>
-            <p className="text-xs text-zinc-500 italic leading-relaxed">{finalOutput || "No prompt metadata available."}</p>
+            <p className="text-xs text-zinc-500 italic leading-relaxed">{finalOutput || "Prompt bilgisi yok."}</p>
           </div>
         </div>
       );
@@ -131,7 +160,7 @@ export function FinalOutputModal() {
           </div>
           <div className="p-4 bg-zinc-100/50 rounded-xl border border-zinc-100/50">
             <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-1">SENARYO / PROMPT:</p>
-            <p className="text-xs text-zinc-600 italic leading-relaxed">{finalOutput || "No prompt metadata available."}</p>
+            <p className="text-xs text-zinc-600 italic leading-relaxed">{finalOutput || "Prompt bilgisi yok."}</p>
           </div>
         </div>
       );
@@ -198,14 +227,29 @@ export function FinalOutputModal() {
           )}
 
           <div className="flex justify-between items-center">
-            <div className="text-[9px] font-bold text-zinc-300 uppercase tracking-widest leading-none">
-              Generated March 2026
+            <div className="flex gap-2 flex-wrap">
+              <button onClick={handleDownloadMd} className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-zinc-200 text-[10px] font-black uppercase text-zinc-500 hover:text-darkDelegation">
+                <Download size={13} /> .md indir
+              </button>
+              {scriptText && (
+                <button onClick={() => saveFile(`senaryo-${stamp}.txt`, scriptText)} className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-zinc-200 text-[10px] font-black uppercase text-zinc-500 hover:text-darkDelegation" title="Zaman damgalı metni OpenMontage hattına ver">
+                  <Clapperboard size={13} /> OpenMontage senaryosu
+                </button>
+              )}
+              <button
+                onClick={handleSaveObsidian}
+                disabled={obsidianStatus !== 'connected' || !isObsidianConnected()}
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-zinc-200 text-[10px] font-black uppercase text-zinc-500 hover:text-violet-500 disabled:opacity-40"
+                title={savedPath || 'Obsidian bağlı olmalı'}
+              >
+                <Brain size={13} /> {savedPath ? 'Kaydedildi ✓' : "Obsidian'a kaydet"}
+              </button>
             </div>
             <button
               onClick={handleCopy}
               className="px-6 py-3 bg-darkDelegation text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-black active:scale-[0.98] transition-all shadow-lg shadow-black/10"
             >
-              {copied ? 'Copied!' : `Copy ${finalAssetType === 'text' ? 'Output' : 'Prompt'}`}
+              {copied ? 'Kopyalandı!' : finalAssetType === 'text' ? 'Çıktıyı Kopyala' : 'Promptu Kopyala'}
             </button>
           </div>
         </div>

@@ -21,7 +21,7 @@ export const TeamOutputBadge: React.FC<TeamOutputBadgeProps> = ({ system, classN
           {system.outputType === 'music' && <Music size={11} strokeWidth={2.5} />}
           {system.outputType === 'video' && <Video size={11} strokeWidth={2.5} />}
           <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 leading-none">
-            {system.outputType || 'TEXT'}
+            {({ text: 'METİN', image: 'GÖRSEL', music: 'MÜZİK', video: 'VİDEO' } as Record<string, string>)[system.outputType] || 'METİN'}
           </span>
         </div>
         
@@ -29,8 +29,8 @@ export const TeamOutputBadge: React.FC<TeamOutputBadgeProps> = ({ system, classN
         {system.outputAutoApprove !== undefined && (
           <InfoTooltip
             text={system.outputAutoApprove
-              ? 'Output will be generated and delivered automatically'
-              : 'Output requires your manual review and approval before generation'}
+              ? 'Çıktı otomatik üretilip teslim edilir'
+              : 'Çıktı üretilmeden önce senin onayını bekler'}
           >
             <div className="flex items-center gap-1.5">
               <div 
@@ -41,7 +41,7 @@ export const TeamOutputBadge: React.FC<TeamOutputBadgeProps> = ({ system, classN
                 }} 
               />
               <span className="text-[7px] font-bold text-zinc-300 uppercase tracking-tighter leading-none whitespace-nowrap">
-                {system.outputAutoApprove ? 'AUTO APPROVE' : 'MANUAL REVIEW'}
+                {system.outputAutoApprove ? 'OTOMATİK ONAY' : 'ELLE ONAY'}
               </span>
             </div>
           </InfoTooltip>
