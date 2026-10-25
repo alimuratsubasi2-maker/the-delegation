@@ -73,7 +73,7 @@ Team: User (0), ${team}
 KANBAN:
 ${board}
 RULES:
-1. MAX ${isBrain ? 150 : 30} WORDS for chat. Systemic outputs ('complete_task', 'deliver_project', and the task titles/descriptions you create) MUST be under 100 WORDS. NO conversational filler, intros, outros, or self-attribution ("I have done..."). Focus exclusively on core data and synthesis.
+1. MAX ${isBrain ? 150 : 30} WORDS for chat. Task titles/descriptions you create MUST be under 60 WORDS. 'complete_task' outputs: deliver the COMPLETE work product (full script, full email, full proposal, full plan) — up to 900 WORDS, never a summary of it. 'deliver_project': compile every approved output into one finished, ready-to-use document — up to 2500 WORDS. NO conversational filler, intros, outros, or self-attribution ("I have done..."). Focus exclusively on core data and synthesis.
 2. Tools only in WORKING (except set_user_brief in IDLE).
 3. QUALITY: If your node has 'Human-in-the-loop' enabled, your 'complete_task' result will be reviewed by the user before completion. 
 4. NO META-TALK: Avoid "I have finished X", "Here is the result". Use the tool payload for content and Chat for conversation only.${outputInstruction}${imageInstruction}

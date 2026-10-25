@@ -7,7 +7,7 @@ interface ObsidianModalProps {
 }
 
 const ObsidianModal: React.FC<ObsidianModalProps> = ({ onClose }) => {
-  const { url, apiKey, status, error, projectCount, noteCount, setConfig } = useObsidianStore();
+  const { url, apiKey, status, error, projectCount, noteCount, lastSavedPath, setConfig } = useObsidianStore();
   const [urlInput, setUrlInput] = useState(url || DEFAULT_OBSIDIAN_URL);
   const [keyInput, setKeyInput] = useState(apiKey);
   const [showKey, setShowKey] = useState(false);
@@ -67,6 +67,8 @@ const ObsidianModal: React.FC<ObsidianModalProps> = ({ onClose }) => {
           {status === 'connected' && (
             <div className="px-4 py-3 rounded-2xl bg-violet-50 text-violet-700 font-semibold">
               ✓ Bağlandı — {projectCount} proje, {noteCount} not ofisin beynine yüklendi.
+              <div className="font-normal mt-1">Biten her proje otomatik olarak <b>Nova Ofis Ciktilari</b> klasörüne not olarak kaydedilir.</div>
+              {lastSavedPath && <div className="font-normal mt-1 break-all">Son kayıt: {lastSavedPath}</div>}
             </div>
           )}
           {status === 'error' && (

@@ -1,4 +1,7 @@
 import { create } from 'zustand';
+import { getAllCharacters } from '../../data/agents';
+import { useCoreStore } from '../../integration/store/coreStore';
+import { getActiveAgentSet } from '../../integration/store/teamStore';
 
 /**
  * Obsidian "second brain" for the office.
@@ -40,6 +43,7 @@ interface ObsidianState extends ObsidianConfig {
   overview: string;
   projectCount: number;
   noteCount: number;
+  lastSavedPath: string | null;
   setConfig: (config: ObsidianConfig) => void;
 }
 
@@ -58,6 +62,7 @@ export const useObsidianStore = create<ObsidianState>((set) => ({
   overview: '',
   projectCount: 0,
   noteCount: 0,
+  lastSavedPath: null,
   setConfig: (config) => {
     set({ ...config });
     try {
@@ -205,6 +210,68 @@ export async function buildBrainContext(query: string, fullMap: boolean): Promis
     (fullMap && overview ? `\nPROJECT MAP:\n${overview}` : '') +
     (hits ? `\nRELEVANT NOTES for "${query.slice(0, 80)}":\n${hits}` : '');
 }
+
+// ── Write-back: finished projects become notes ───────────────
+
+export const OUTPUT_FOLDER = 'Nova Ofis Ciktilari';
+
+const slug = (s: string) =>
+  s.replace(/[\\/:*?"<>|#^[\]]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60) || 'Proje';
+
+/** Saves the delivered project (brief, every approved task output, final delivery) as a vault note. */
+export async function saveProjectToObsidian(): Promise<string | null> {
+  if (!isObsidianConnected()) return null;
+  const core = useCoreStore.getState();
+  if (!core.finalOutput) return null;
+  const team = getActiveAgentSet();
+  const people = getAllCharacters(team);
+  const nameOf = (i: number) => people.find((p) => p.index === i)?.name || `Ajan ${i}`;
+
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const title = slug(core.userBrief.split(/[.\n]/)[0] || team.teamName);
+  const path = `${OUTPUT_FOLDER}/${date} ${pad(d.getHours())}${pad(d.getMinutes())} - ${title}.md`;
+
+  const tasks = core.tasks
+    .filter((t) => t.status === 'done' && t.output)
+    .map((t) => `### ${t.title}\n*${nameOf(t.assignedAgentId)}*\n\n${t.output}`)
+    .join('\n\n');
+
+  const md = [
+    '---',
+    `tarih: ${date}`,
+    `ekip: ${team.teamName}`,
+    'tur: ofis-ciktisi',
+    `maliyet_usd: ${core.totalEstimatedCost.toFixed(4)}`,
+    '---',
+    `# ${title}`,
+    '',
+    '## Proje özeti',
+    core.userBrief,
+    '',
+    '## Son teslim',
+    core.finalOutput,
+    '',
+    '## Ekip çıktıları',
+    tasks,
+    '',
+  ].join('\n');
+
+  try {
+    await request(`/vault/${encodePath(path)}`, { method: 'PUT', headers: { 'Content-Type': 'text/markdown' }, body: md });
+    useObsidianStore.setState({ lastSavedPath: path });
+    return path;
+  } catch (e) {
+    console.warn('[Obsidian] Could not save project', e);
+    return null;
+  }
+}
+
+// Every delivered project is filed into the vault so the brain grows with each job
+useCoreStore.subscribe((s, prev) => {
+  if (s.finalOutput && s.finalOutput !== prev.finalOutput) saveProjectToObsidian();
+});
 
 // Reconnect automatically when a key was saved in a previous session
 if (useObsidianStore.getState().apiKey) connectObsidian();

@@ -7,7 +7,7 @@ export const MAX_AGENTS = 11;
 export { USER_COLOR };
 export const DEFAULT_AGENTIC_SET_ID = 'single-agent';
 /** Bump whenever built-in teams change so stale saved copies are discarded. */
-export const BUILT_IN_TEAMS_VERSION = 4;
+export const BUILT_IN_TEAMS_VERSION = 6;
 export interface AgentNode {
   id: string;
   index: number;
@@ -257,61 +257,175 @@ export const AGENTIC_SETS: AgenticSystem[] = [
     }
   },
   {
-    id: 'unboring-net',
-    teamName: 'unboring.net',
-    teamType: 'Agency',
-    teamDescription: 'A full-service creative agency covering branding, design, development and go-to-market strategy.',
-    color: '#4285F4',
+    id: 'musteri-kazanma',
+    teamName: 'Müşteri Kazanma',
+    teamType: 'Satış',
+    teamDescription: 'Nova Dijital için hedef müşteri bulan, kişiye özel tanışma e-postası yazan, cevap gelince teklif ve takip mesajı hazırlayan satış ekibi.',
+    color: '#0EA5E9',
     outputType: 'text',
     outputModel: DEFAULT_MODELS.text,
-    outputAutoApprove: true,
+    outputAutoApprove: false,
     user: { index: 0, model: 'Human', position: { x: 0, y: 0 } },
     leadAgent: {
-      id: 'agency-orchestrator',
+      id: 'sales-manager',
       index: 1,
-      name: 'Creative Director',
-      description: 'Orchestrates branding, design, and development to deliver integrated creative solutions.',
-      color: '#4285F4',
+      name: 'Satış Müdürü',
+      description: 'Hedef segmenti (YouTube kanalları, esnaf, şirketler) seçer, ekibi sırayla çalıştırır ve gönderilecek metinleri kullanıcı onayına sunar. İlk görevi her zaman Obsidian’a verir.',
+      color: '#0EA5E9',
       model: DEFAULT_MODELS.text,
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
         {
-          id: 'agency-developer',
+          id: 'obsidian-sales',
           index: 2,
-          name: 'Developer',
-          description: 'Architects and develops robust digital platforms and interactive experiences.',
-          color: '#34A853',
+          name: 'Obsidian',
+          description: 'Ofisin beyni: kullanıcının Obsidian kasasındaki tüm projeleri, akıl haritalarını, kuralları ve tercihleri bilir. Her işin başında ekibe geçmiş projelerden ilgili bağlamı, kuralları ve kaçınılacak hataları özetler.',
+          color: '#A855F7',
           model: DEFAULT_MODELS.text,
-          position: { x: -300, y: 280 }
+          position: { x: 420, y: 130 }
         },
         {
-          id: 'agency-designer',
+          id: 'sales-lead-hunter',
           index: 3,
-          name: 'Designer',
-          description: 'Crafts visual identities, user interfaces, and premium brand aesthetics.',
-          color: '#FBBC05',
+          name: 'Müşteri Avcısı',
+          description: 'Hedef segmentte 10 aday çıkarır: isim, kanal/işletme, abone veya büyüklük, neden uygun olduğu. Finans, ekonomi ve bilgi anlatımı yapan konuşan-kafa kanallar önceliklidir.',
+          color: '#38BDF8',
           model: DEFAULT_MODELS.text,
-          position: { x: 0, y: 280 }
+          position: { x: -450, y: 280 }
         },
         {
-          id: 'agency-copywriter',
+          id: 'sales-researcher',
           index: 4,
-          name: 'Copywriter',
-          description: 'Crafts compelling narratives and strategic messaging for brands.',
-          color: '#EA4335',
-          humanInTheLoop: true,
+          name: 'Kanal Analisti',
+          description: 'Seçilen adayın içeriğini inceler: en çok izlenen videolar, Shorts potansiyeli olan anlar, eksikler. E-postaya girecek 1-2 somut gözlem çıkarır.',
+          color: '#22D3EE',
           model: DEFAULT_MODELS.text,
-          position: { x: 300, y: 280 }
+          position: { x: -150, y: 280 }
+        },
+        {
+          id: 'sales-email-writer',
+          index: 5,
+          name: 'E-posta Yazarı',
+          description: 'Soğuk ilk e-postayı yazar. KURALLAR: konu satırı "tanışma"; ilk mesaj SADECE tanışma, fiyat yok; madde işareti yok; link yok; kısa; kanala özel gözlem + ücretsiz örnek teklifi; imza "Nova Dijital Ekibi".',
+          color: '#0284C7',
+          model: DEFAULT_MODELS.text,
+          humanInTheLoop: true,
+          position: { x: 150, y: 280 }
+        },
+        {
+          id: 'sales-proposal',
+          index: 6,
+          name: 'Teklif Uzmanı',
+          description: 'Karşı taraf ilgilenince fiyatlı teklif yazar. Editörlük: uzun videodan Short 300₺/adet (en az 5 hazırlanır, sadece seçilenler ücretli), sıfırdan Short 750₺, uzun video edit 1.000–1.200₺. Web: tek sayfa 3-7k₺, kurumsal 8-20k₺. Uygulama: 4-9k₺ başlangıç. AI video: 750-2000₺. %50 peşin, 2 revizyon ücretsiz.',
+          color: '#0369A1',
+          model: DEFAULT_MODELS.text,
+          humanInTheLoop: true,
+          position: { x: 450, y: 280 }
+        },
+        {
+          id: 'sales-followup',
+          index: 7,
+          name: 'Takip Uzmanı',
+          description: 'Cevap gelmeyen adaylara 3-5 gün sonra gönderilecek kısa ve nazik hatırlatmayı yazar; baskı yapmaz, tek cümlelik değer ekler.',
+          color: '#7DD3FC',
+          model: DEFAULT_MODELS.text,
+          position: { x: 450, y: 430 }
+        }
+      ]
+    }
+  },
+  {
+    id: 'shorts-fabrikasi',
+    teamName: 'Shorts Fabrikası',
+    teamType: 'Kısa Video',
+    teamDescription: 'YouTube Shorts, Reels ve TikTok için 30-60 saniyelik dikey video paketleri: trend, kanca, senaryo, altyazı ve yayın planı.',
+    color: '#F43F5E',
+    outputType: 'text',
+    outputModel: DEFAULT_MODELS.text,
+    outputAutoApprove: false,
+    user: { index: 0, model: 'Human', position: { x: 0, y: 0 } },
+    leadAgent: {
+      id: 'shorts-manager',
+      index: 1,
+      name: 'Shorts Yöneticisi',
+      description: 'Kanalı ve formatı (ör. Top 5 tarih, finans açıklaması, uzun videodan kesit) netleştirir, hattı sırayla yürütür. İlk görevi her zaman Obsidian’a verir.',
+      color: '#F43F5E',
+      model: DEFAULT_MODELS.text,
+      humanInTheLoop: true,
+      position: { x: 0, y: 130 },
+      subagents: [
+        {
+          id: 'obsidian-shorts',
+          index: 2,
+          name: 'Obsidian',
+          description: 'Ofisin beyni: kullanıcının Obsidian kasasındaki tüm projeleri, akıl haritalarını, kuralları ve tercihleri bilir. Her işin başında ekibe geçmiş projelerden ilgili bağlamı, kuralları ve kaçınılacak hataları özetler.',
+          color: '#A855F7',
+          model: DEFAULT_MODELS.text,
+          position: { x: 420, y: 130 }
+        },
+        {
+          id: 'shorts-trend',
+          index: 3,
+          name: 'Trend Avcısı',
+          description: 'Nişte şu an tutan 5 Shorts fikri bulur; her biri için neden tutacağını tek cümleyle açıklar.',
+          color: '#FB7185',
+          model: DEFAULT_MODELS.text,
+          position: { x: 0, y: 260 },
+          subagents: [
+            {
+              id: 'shorts-hook',
+              index: 4,
+              name: 'Kanca Yazarı',
+              description: 'Seçilen fikir için ilk 2 saniyede izleyiciyi durduracak 3 kanca cümlesi ve ekran yazısı yazar.',
+              color: '#E11D48',
+              model: DEFAULT_MODELS.text,
+              humanInTheLoop: true,
+              position: { x: 0, y: 390 },
+              subagents: [
+                {
+                  id: 'shorts-script',
+                  index: 5,
+                  name: 'Kısa Senarist',
+                  description: '30-60 saniyelik, saniye damgalı dikey video senaryosu yazar: sahne, seslendirme, ekran yazısı.',
+                  color: '#BE123C',
+                  model: DEFAULT_MODELS.text,
+                  position: { x: 0, y: 520 },
+                  subagents: [
+                    {
+                      id: 'shorts-editor',
+                      index: 6,
+                      name: 'Altyazı & Kurgu',
+                      description: 'Kesim ritmi, zoom noktaları, animasyonlu altyazı vurguları, SFX ve müzik planını çıkarır; 9:16 ekran tamamen dolu olmalı.',
+                      color: '#9F1239',
+                      model: DEFAULT_MODELS.text,
+                      position: { x: 0, y: 650 },
+                      subagents: [
+                        {
+                          id: 'shorts-publisher',
+                          index: 7,
+                          name: 'Yayıncı',
+                          description: 'Başlık, açıklama, hashtagler ve YouTube/Instagram/TikTok için ayrı yayın saatlerini hazırlar.',
+                          color: '#FDA4AF',
+                          model: DEFAULT_MODELS.text,
+                          position: { x: 0, y: 780 }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
   },
   {
     id: 'photo-studio',
-    teamName: 'Nano Banana Lab',
-    teamType: 'Visual',
-    teamDescription: 'Pro image generation using the [Subject] + [Action] + [Context] + [Comp] + [Style] formula.',
+    teamName: 'AI Reklam Görseli',
+    teamType: 'Görsel',
+    teamDescription: 'Ürün ve reklam görselleri (Nano Banana): sahne, ışık ve kompozisyonu ekip kurar, sen onaylayınca görsel üretilir. Gemini faturalandırması gerekir.',
     color: '#FBBF24',
     outputType: 'image',
     outputModel: DEFAULT_MODELS.image,
@@ -352,9 +466,9 @@ export const AGENTIC_SETS: AgenticSystem[] = [
   },
   {
     id: 'music-studio',
-    teamName: 'Lyria Factory',
-    teamType: 'Music Production',
-    teamDescription: 'High-fidelity audio production following Lyria guidelines.',
+    teamName: 'Reklam Müziği',
+    teamType: 'Müzik',
+    teamDescription: 'Reklam ve videolar için telifsiz arka plan müziği (Lyria 3): tür, tempo, enstrüman ve dinamik planlanır. Gemini faturalandırması gerekir.',
     color: '#43E47C',
     outputType: 'music',
     outputModel: DEFAULT_MODELS.music,
@@ -415,9 +529,9 @@ export const AGENTIC_SETS: AgenticSystem[] = [
   },
   {
     id: 'film-studio',
-    teamName: 'Veo Studio',
-    teamType: 'Cinematic',
-    teamDescription: 'Full cinematic production: Visuals + Soundstage (Veo 3.1 style).',
+    teamName: 'AI Reklam Videosu',
+    teamType: 'Video',
+    teamDescription: 'Dükkan ve markalar için kısa AI reklam videosu (Veo 3.1): görüntü + ses sahnesi ekip tarafından kurulur. Gemini faturalandırması gerekir.',
     color: '#E64347',
     outputType: 'video',
     outputModel: DEFAULT_MODELS.video,
@@ -472,70 +586,6 @@ export const AGENTIC_SETS: AgenticSystem[] = [
               color: '#50BB55',
               model: DEFAULT_MODELS.text,
               position: { x: 200, y: 430 }
-            }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    id: 'strategy-coach',
-    teamName: 'Strategy Coach',
-    teamType: 'Strategic',
-    teamDescription: 'A high-level strategic advisor for project direction and roadmap.',
-    color: '#64748B',
-    outputType: 'text',
-    outputModel: DEFAULT_MODELS.text,
-    outputAutoApprove: true,
-    user: { index: 0, model: 'Human', position: { x: 0, y: 0 } },
-    leadAgent: {
-      id: 'visionary-advisor',
-      index: 1,
-      name: 'Visionary Advisor',
-      description: 'Handles project direction, roadmap, and ecosystem growth strategy.',
-      color: '#64748B',
-      model: DEFAULT_MODELS.text,
-      humanInTheLoop: true,
-      position: { x: 0, y: 130 }
-    }
-  },
-  {
-    id: 'pr-agency',
-    teamName: 'PR Agency',
-    teamType: 'Public Relations',
-    teamDescription: 'A sequential pipeline for media outreach: from strategy to press drafting.',
-    color: '#E34B99',
-    outputType: 'text',
-    outputModel: DEFAULT_MODELS.text,
-    outputAutoApprove: false,
-    user: { index: 0, model: 'Human', position: { x: 0, y: 0 } },
-    leadAgent: {
-      id: 'pr-director',
-      index: 1,
-      name: 'PR Director',
-      description: 'Oversees media relations, strategic communications, and brand reputation.',
-      color: '#E34B99',
-      model: DEFAULT_MODELS.text,
-      humanInTheLoop: true,
-      position: { x: 0, y: 130 },
-      subagents: [
-        {
-          id: 'media-strategist',
-          index: 2,
-          name: 'Media Strategist',
-          description: 'Identifies key media outlets and manages journalist outreach.',
-          color: '#E6D979',
-          model: DEFAULT_MODELS.text,
-          position: { x: 0, y: 260 },
-          subagents: [
-            {
-              id: 'press-writer',
-              index: 3,
-              name: 'Press Writer',
-              description: 'Drafts press releases and media kits based on strategic goals.',
-              color: '#5E888E',
-              model: DEFAULT_MODELS.text,
-              position: { x: 0, y: 390 }
             }
           ]
         }
