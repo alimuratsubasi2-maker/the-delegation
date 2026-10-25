@@ -29,6 +29,7 @@ interface Snapshot {
 }
 
 interface Output { title: string; agent: string; parts: string[]; of: number }
+interface ChatMsg { ai: number; n: string; r: 'user' | 'assistant'; x: string; ts: number }
 
 const PHASE: Record<string, [string, string]> = {
   idle: ['Başlamaya hazır', 'bg-zinc-600'],
@@ -53,7 +54,10 @@ const ago = (ts: number, now: number) => {
 
 const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
   const [snap, setSnap] = useState<Snapshot | null>(null);
-  const [view, setView] = useState<'ofis' | 'durum'>('ofis');
+  const [view, setView] = useState<'ofis' | 'sohbet' | 'durum'>('ofis');
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [target, setTarget] = useState<number | ''>('');
+  const [waitingSince, setWaitingSince] = useState<number | null>(null);
   const [outputs, setOutputs] = useState<Record<string, Output>>({});
   const [live, setLive] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -68,6 +72,7 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
       try {
         const msg = await decodePayload(raw.message);
         if (msg.k === 'state') setSnap((prev) => (!prev || msg.t >= prev.t ? msg : prev));
+        if (msg.k === 'msg') setMessages((prev) => [...prev, msg].sort((a, b) => a.ts - b.ts));
         if (msg.k === 'out') {
           setOutputs((prev) => {
             const cur = prev[msg.id] && prev[msg.id].of === msg.of ? prev[msg.id] : { title: msg.ti, agent: msg.a, parts: [], of: msg.of };
@@ -97,6 +102,11 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
   }, [topic]);
 
   const pending = snap?.tasks.filter((t) => t.s === 'on_hold') ?? [];
+  const leadIndex = snap?.agents[0]?.i ?? 1;
+  const chatAgent = target === '' ? leadIndex : target;
+  const thread = messages.filter((m) => m.ai === chatAgent);
+  const replied = waitingSince !== null && thread.some((m) => m.r === 'assistant' && m.ts > waitingSince);
+  useEffect(() => { if (replied) setWaitingSince(null); }, [replied]);
   const finalText = outputs.final ? outputs.final.parts.join('') : '';
 
   return (
@@ -119,13 +129,13 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
 
       {/* Tabs: live 3D office (default) or the status lists */}
       <div className="sticky top-[61px] z-10 bg-[#0b1122] px-4 pt-2 pb-2 flex gap-2">
-        {(['ofis', 'durum'] as const).map((v) => (
+        {(['ofis', 'sohbet', 'durum'] as const).map((v) => (
           <button
             key={v}
             onClick={() => setView(v)}
             className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider ${view === v ? 'bg-violet-600 text-white' : 'bg-[#121a2f] text-[#949bb6]'}`}
           >
-            {v === 'ofis' ? '🏢 Ofis' : `📋 Durum${pending.length ? ` (${pending.length} onay)` : ''}`}
+            {v === 'ofis' ? '🏢 Ofis' : v === 'sohbet' ? '💬 Sohbet' : `📋 Durum${pending.length ? ` (${pending.length})` : ''}`}
           </button>
         ))}
       </div>
@@ -139,6 +149,31 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
             <button onClick={() => setView('durum')} className="absolute top-3 inset-x-4 py-2.5 rounded-xl bg-amber-500 text-black text-xs font-black shadow-lg">
               🟣 {pending.length} iş onayını bekliyor — dokun
             </button>
+          )}
+        </div>
+      )}
+
+      {view === 'sohbet' && (
+        <div className="p-4 space-y-3">
+          <div className="text-[11px] text-[#949bb6]">
+            {snap?.agents.find((a) => a.i === chatAgent)?.n ?? 'Lider ajan'} ile sohbet · aşağıdan kişi değiştirebilirsin
+          </div>
+          {thread.length === 0 && !waitingSince && (
+            <div className="p-4 rounded-2xl bg-[#121a2f] border border-[#222c47] text-sm text-[#b4bace]">Henüz mesaj yok. Aşağıdan yaz, cevap burada görünür.</div>
+          )}
+          {thread.map((m, i) => (
+            <div key={i} className={`flex ${m.r === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${m.r === 'user' ? 'bg-violet-600 text-white rounded-br-md' : 'bg-[#18213a] text-[#e7e9f5] rounded-bl-md'}`}>
+                {m.r === 'assistant' && <div className="text-[10px] font-black text-violet-300 mb-0.5">{m.n}</div>}
+                <div className="markdown-content break-words"><ReactMarkdown remarkPlugins={[remarkGfm]}>{m.x}</ReactMarkdown></div>
+                <div className={`text-[9px] mt-1 ${m.r === 'user' ? 'text-violet-200' : 'text-[#5f6684]'}`}>{ago(m.ts, now)}</div>
+              </div>
+            </div>
+          ))}
+          {waitingSince && (
+            <div className="flex justify-start">
+              <div className="rounded-2xl rounded-bl-md px-3.5 py-2.5 bg-[#18213a] text-[#949bb6] text-sm animate-pulse">yazıyor…</div>
+            </div>
           )}
         </div>
       )}
@@ -220,7 +255,13 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
 
       </>)}
 
-      <ChatBar topic={topic} agents={snap?.agents ?? []} />
+      <ChatBar
+        topic={topic}
+        agents={snap?.agents ?? []}
+        target={target}
+        setTarget={setTarget}
+        onSent={() => { setWaitingSince(Date.now()); setView('sohbet'); }}
+      />
     </div>
   );
 };
@@ -312,13 +353,19 @@ const PendingTask: React.FC<{ topic: string; task: Snapshot['tasks'][number] }> 
   );
 };
 
-const ChatBar: React.FC<{ topic: string; agents: Snapshot['agents'] }> = ({ topic, agents }) => {
+const ChatBar: React.FC<{
+  topic: string;
+  agents: Snapshot['agents'];
+  target: number | '';
+  setTarget: (t: number | '') => void;
+  onSent: () => void;
+}> = ({ topic, agents, target, setTarget, onSent }) => {
   const [text, setText] = useState('');
   const [sent, setSent] = useState(false);
-  const [target, setTarget] = useState<number | ''>('');
   const submit = async () => {
     if (!text.trim()) return;
     await sendCommand(topic, { type: 'chat', text: text.trim(), agent: target === '' ? undefined : target });
+    onSent();
     setText('');
     setSent(true);
     setTimeout(() => setSent(false), 2500);

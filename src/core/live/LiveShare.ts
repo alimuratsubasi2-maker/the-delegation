@@ -227,8 +227,38 @@ function schedulePublish() {
   }, wait);
 }
 
+/** Mirrors one chat message (from any device) so the phone shows the full conversation. */
+async function publishMessage(agentIndex: number, agentName: string, role: string, text: string) {
+  const { enabled, topic } = useLiveStore.getState();
+  if (!enabled) return;
+  try {
+    await post(topic, await encodePayload({ k: 'msg', ai: agentIndex, n: agentName, r: role, x: clip(text, 3000), ts: Date.now() }));
+  } catch (e) {
+    console.warn('[Live] chat message failed', e);
+  }
+}
+
 export function startLiveShare() {
   const nameOf = (i: number) => getAllCharacters(getActiveAgentSet()).find((p) => p.index === i)?.name || `Ajan ${i}`;
+
+  // Chat mirroring: publish every new visible message in any agent's history
+  const sentCount: Record<number, number> = {};
+  for (const [k, h] of Object.entries(useCoreStore.getState().agentHistories)) sentCount[Number(k)] = h?.length ?? 0;
+  useCoreStore.subscribe((s, prev) => {
+    if (s.agentHistories === prev.agentHistories) return;
+    for (const [k, history] of Object.entries(s.agentHistories)) {
+      const idx = Number(k);
+      const h = history || [];
+      const from = Math.min(sentCount[idx] ?? (prev.agentHistories[idx]?.length ?? 0), h.length);
+      for (let m = from; m < h.length; m++) {
+        const msg = h[m];
+        if (msg.metadata?.internal || typeof msg.content !== 'string' || !msg.content.trim()) continue;
+        if (msg.role !== 'user' && msg.role !== 'assistant') continue;
+        publishMessage(idx, nameOf(idx), msg.role, msg.content.replace(/^📱\s*/, ''));
+      }
+      sentCount[idx] = h.length;
+    }
+  });
 
   useCoreStore.subscribe((s, prev) => {
     const relevant = s.tasks !== prev.tasks || s.phase !== prev.phase || s.userBrief !== prev.userBrief || s.actionLog !== prev.actionLog;

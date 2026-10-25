@@ -5,6 +5,7 @@ import { getActiveAgentSet, useTeamStore } from '../../integration/store/teamSto
 import { useUiStore } from '../../integration/store/uiStore';
 import { setMirrorMode } from '../../simulation/core/AgentSimulation';
 import { SceneManager } from '../../simulation/SceneManager';
+import { NameTags } from '../components/NameTags';
 
 /**
  * Live 3D copy of the desktop office for the phone page.
@@ -89,18 +90,8 @@ const MirrorOffice: React.FC<{ snapshot: MirrorSnapshot | null; onUnsupported?: 
   return (
     <div className="relative w-full h-full">
       <div ref={ref} className="absolute inset-0" />
-      {/* Name tags above agents that are doing something */}
-      {busy.map((a) => {
-        const p = positions?.[a.i];
-        if (!p) return null;
-        return (
-          <div key={a.i} className="absolute -translate-x-1/2 -translate-y-full pointer-events-none" style={{ left: p.x, top: p.y }}>
-            <div className="px-2 py-0.5 rounded-full text-[10px] font-black text-white whitespace-nowrap shadow" style={{ backgroundColor: a.c }}>
-              {a.n} · {STATUS_LABEL[a.s]}
-            </div>
-          </div>
-        );
-      })}
+      {/* Every agent's name, with status when busy */}
+      <NameTags agents={(snapshot?.agents ?? []).map((a) => ({ index: a.i, name: a.n, color: a.c, status: a.s }))} positions={positions} compact />
       {!snapshot && (
         <div className="absolute inset-x-4 bottom-4 p-3 rounded-2xl bg-[#121a2f]/90 text-xs text-[#b4bace]">
           Bilgisayardaki ofisten veri bekleniyor… ({people.length} ajan)

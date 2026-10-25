@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { getAgentSet, getAllAgents, getAllCharacters } from '../data/agents';
 import { useUiStore } from '../integration/store/uiStore';
 import InfoModal from './InfoModal';
+import { NameTags } from './components/NameTags';
 
 import { MessageSquareWarning, PartyPopper, Siren, Loader2 } from 'lucide-react';
 import { Task, useCoreStore } from '../integration/store/coreStore';
@@ -96,6 +97,7 @@ const UIOverlay: React.FC = () => {
   } = useCoreStore();
   const system = useActiveTeam();
   const npcAgents = getAllAgents(system);
+  const agentStatuses = useUiStore((s) => s.agentStatuses);
   const allPossibleAgents = getAllCharacters(system);
 
   const selectedAgent = selectedNpcIndex != null ? allPossibleAgents.find(a => a.index === selectedNpcIndex) as any ?? null : null;
@@ -104,6 +106,13 @@ const UIOverlay: React.FC = () => {
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden select-none">
+      {/* 0. Name tags on every mascot (the detailed bubble replaces it when hovered/selected) */}
+      <NameTags
+        agents={npcAgents.map((a) => ({ index: a.index, name: a.name, color: a.color, status: agentStatuses[a.index] }))}
+        positions={npcScreenPositions}
+        hide={(i) => i === hoveredNpcIndex || i === selectedNpcIndex}
+      />
+
       {/* 1. Parallel Alert Bubbles System */}
       {npcAgents.map((agent) => {
         const pos = npcScreenPositions[agent.index];
