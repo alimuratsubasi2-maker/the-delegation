@@ -37,7 +37,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="h-14 border-b border-zinc-100 flex items-center justify-between px-6 bg-white shrink-0 relative z-40">
+    <header className="h-14 border-b border-zinc-100 flex items-center justify-between px-3 md:px-6 bg-white shrink-0 relative z-40">
       {/* Left: Project Title */}
       <div className="flex items-center min-w-0">
         <img
@@ -46,7 +46,7 @@ const Header: React.FC = () => {
           className="h-10 w-auto shrink-0"
         />
 
-        <div className="flex items-center gap-3 self-start mt-3 ml-2 min-w-0">
+        <div className="hidden md:flex items-center gap-3 self-start mt-3 ml-2 min-w-0">
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={() => setIsInfoOpen(true)}
