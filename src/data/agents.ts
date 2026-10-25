@@ -40,8 +40,8 @@ export const AGENTIC_SETS: AgenticSystem[] = [
   {
     id: 'nova-dijital',
     teamName: 'Nova Dijital',
-    teamType: 'Digital Agency',
-    teamDescription: 'A 10-person digital agency: strategy, creative and growth departments delivering websites, brands and campaigns.',
+    teamType: 'Dijital Ajans',
+    teamDescription: 'NovaDijitalTR: web sitesi, mobil uygulama, AI video reklam ve içerik üreticilerine video edit hizmeti veren ajans.',
     color: '#7C3AED',
     outputType: 'text',
     outputModel: DEFAULT_MODELS.text,
@@ -50,36 +50,36 @@ export const AGENTIC_SETS: AgenticSystem[] = [
     leadAgent: {
       id: 'nova-ceo',
       index: 1,
-      name: 'CEO',
-      description: 'Breaks the client brief into strategy, creative and growth workstreams and approves the final delivery.',
+      name: 'Ajans Müdürü',
+      description: 'Müşteri talebini web/uygulama, AI reklam ve video edit ekiplerine böler, TL fiyat ve teslim planını çıkarır, son teslimi onaylar.',
       color: '#7C3AED',
       model: DEFAULT_MODELS.text,
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
         {
-          id: 'nova-strategy-lead',
+          id: 'nova-web-lead',
           index: 2,
-          name: 'Strategy Lead',
-          description: 'Turns the brief into positioning, target audience and a measurable plan.',
+          name: 'Web & Uygulama Şefi',
+          description: 'Web sitesi ve uygulama projelerinin kapsamını, sayfalarını ve teslim takvimini belirler.',
           color: '#2563EB',
           model: DEFAULT_MODELS.text,
           position: { x: -500, y: 280 },
           subagents: [
             {
-              id: 'nova-market-researcher',
+              id: 'nova-web-developer',
               index: 5,
-              name: 'Market Researcher',
-              description: 'Researches competitors, pricing and audience pain points.',
+              name: 'Web Geliştirici',
+              description: 'Web sitesinin sayfa yapısını, bileşenlerini, teknolojisini ve SEO temelini planlar.',
               color: '#60A5FA',
               model: DEFAULT_MODELS.text,
               position: { x: -630, y: 430 }
             },
             {
-              id: 'nova-seo-specialist',
+              id: 'nova-app-developer',
               index: 6,
-              name: 'SEO Specialist',
-              description: 'Plans keywords, site structure and search-friendly content.',
+              name: 'Uygulama Geliştirici',
+              description: 'Mobil/PWA uygulamanın ekranlarını, özelliklerini ve veri akışını tasarlar.',
               color: '#0EA5E9',
               model: DEFAULT_MODELS.text,
               position: { x: -370, y: 430 }
@@ -87,28 +87,28 @@ export const AGENTIC_SETS: AgenticSystem[] = [
           ]
         },
         {
-          id: 'nova-creative-lead',
+          id: 'nova-ads-lead',
           index: 3,
-          name: 'Creative Lead',
-          description: 'Owns the visual and verbal identity of every deliverable.',
+          name: 'AI Reklam Şefi',
+          description: 'AI video reklam projelerinde marka mesajını, hedef kitleyi ve platformu (Instagram, TikTok, YouTube) belirler.',
           color: '#DB2777',
           model: DEFAULT_MODELS.text,
           position: { x: 0, y: 280 },
           subagents: [
             {
-              id: 'nova-copywriter',
+              id: 'nova-ad-copywriter',
               index: 7,
-              name: 'Copywriter',
-              description: 'Writes headlines, page copy and ad texts in the brand voice.',
+              name: 'Reklam Senaristi',
+              description: 'Reklamın kancasını, sahne sahne senaryosunu ve CTA metnini yazar.',
               color: '#F472B6',
               model: DEFAULT_MODELS.text,
               position: { x: -130, y: 430 }
             },
             {
-              id: 'nova-brand-designer',
+              id: 'nova-ai-video-producer',
               index: 8,
-              name: 'Brand Designer',
-              description: 'Defines logo direction, color palette, typography and layouts.',
+              name: 'AI Video Üreticisi',
+              description: 'Senaryodan her sahne için AI görsel/video promptlarını, kamera hareketlerini ve stil kurallarını çıkarır.',
               color: '#E11D48',
               model: DEFAULT_MODELS.text,
               position: { x: 130, y: 430 }
@@ -116,28 +116,28 @@ export const AGENTIC_SETS: AgenticSystem[] = [
           ]
         },
         {
-          id: 'nova-growth-lead',
+          id: 'nova-edit-lead',
           index: 4,
-          name: 'Growth Lead',
-          description: 'Plans launch, channels and conversion tracking.',
+          name: 'Video Edit Şefi',
+          description: 'İçerik üreticilerinin ham videoları için kurgu tarzını, süreyi ve teslim formatını belirler.',
           color: '#059669',
           model: DEFAULT_MODELS.text,
           position: { x: 500, y: 280 },
           subagents: [
             {
-              id: 'nova-social-media',
+              id: 'nova-video-editor',
               index: 9,
-              name: 'Social Media Manager',
-              description: 'Creates the content calendar and post ideas for Instagram and TikTok.',
+              name: 'Video Editörü',
+              description: 'Uzun video için kesim listesi, zoom/efekt noktaları, altyazı ve ses düzenini planlar.',
               color: '#34D399',
               model: DEFAULT_MODELS.text,
               position: { x: 370, y: 430 }
             },
             {
-              id: 'nova-web-developer',
+              id: 'nova-shorts-editor',
               index: 10,
-              name: 'Web Developer',
-              description: 'Specifies the site architecture, pages, components and tech stack.',
+              name: 'Shorts Kurgucusu',
+              description: 'Uzun videodan en güçlü anları seçip dikey Shorts/Reels kesimlerini ve başlıklarını hazırlar.',
               color: '#10B981',
               model: DEFAULT_MODELS.text,
               position: { x: 630, y: 430 }
@@ -148,219 +148,88 @@ export const AGENTIC_SETS: AgenticSystem[] = [
     }
   },
   {
-    id: 'etsy-shop-studio',
-    teamName: 'Etsy Shop Studio',
-    teamType: 'E-commerce',
-    teamDescription: 'A 10-agent team that finds a profitable niche and ships ready-to-publish digital product listings.',
-    color: '#F1641E',
-    outputType: 'text',
-    outputModel: DEFAULT_MODELS.text,
-    outputAutoApprove: false,
-    user: { index: 0, model: 'Human', position: { x: 0, y: 0 } },
-    leadAgent: {
-      id: 'etsy-shop-manager',
-      index: 1,
-      name: 'Shop Manager',
-      description: 'Coordinates research, product and listing teams and signs off each listing.',
-      color: '#F1641E',
-      model: DEFAULT_MODELS.text,
-      humanInTheLoop: true,
-      position: { x: 0, y: 130 },
-      subagents: [
-        {
-          id: 'etsy-research-lead',
-          index: 2,
-          name: 'Research Lead',
-          description: 'Decides which niche and product to build next based on demand and competition.',
-          color: '#EA580C',
-          model: DEFAULT_MODELS.text,
-          position: { x: -500, y: 280 },
-          subagents: [
-            {
-              id: 'etsy-niche-hunter',
-              index: 5,
-              name: 'Niche Hunter',
-              description: 'Finds rising, low-competition digital product niches and seasonal trends.',
-              color: '#FB923C',
-              model: DEFAULT_MODELS.text,
-              position: { x: -630, y: 430 }
-            },
-            {
-              id: 'etsy-competitor-analyst',
-              index: 6,
-              name: 'Competitor Analyst',
-              description: 'Studies best-selling competitor listings, prices and review complaints.',
-              color: '#F59E0B',
-              model: DEFAULT_MODELS.text,
-              position: { x: -370, y: 430 }
-            }
-          ]
-        },
-        {
-          id: 'etsy-product-lead',
-          index: 3,
-          name: 'Product Lead',
-          description: 'Defines what the digital product contains and how it is formatted.',
-          color: '#8B5CF6',
-          model: DEFAULT_MODELS.text,
-          position: { x: 0, y: 280 },
-          subagents: [
-            {
-              id: 'etsy-product-designer',
-              index: 7,
-              name: 'Product Designer',
-              description: 'Outlines pages, sections and visual style of the printable or spreadsheet.',
-              color: '#A78BFA',
-              model: DEFAULT_MODELS.text,
-              position: { x: -130, y: 430 }
-            },
-            {
-              id: 'etsy-quality-checker',
-              index: 8,
-              name: 'Quality Checker',
-              description: 'Reviews the product plan for clarity, value and Etsy policy compliance.',
-              color: '#6366F1',
-              model: DEFAULT_MODELS.text,
-              position: { x: 130, y: 430 }
-            }
-          ]
-        },
-        {
-          id: 'etsy-listing-lead',
-          index: 4,
-          name: 'Listing Lead',
-          description: 'Assembles the final listing package.',
-          color: '#16A34A',
-          model: DEFAULT_MODELS.text,
-          position: { x: 500, y: 280 },
-          subagents: [
-            {
-              id: 'etsy-seo-copywriter',
-              index: 9,
-              name: 'SEO Copywriter',
-              description: 'Writes the title, 13 tags and the description optimized for Etsy search.',
-              color: '#4ADE80',
-              model: DEFAULT_MODELS.text,
-              position: { x: 370, y: 430 }
-            },
-            {
-              id: 'etsy-pricing-strategist',
-              index: 10,
-              name: 'Pricing Strategist',
-              description: 'Sets launch price, bundles and discount strategy.',
-              color: '#22C55E',
-              model: DEFAULT_MODELS.text,
-              position: { x: 630, y: 430 }
-            }
-          ]
-        }
-      ]
-    }
-  },
-  {
-    id: 'youtube-studio',
-    teamName: 'YouTube Studio',
-    teamType: 'Content Channel',
-    teamDescription: 'A 10-agent YouTube team producing documentary-style tech video packages: research, script, title and thumbnail.',
+    id: 'youtube-otomasyonu',
+    teamName: 'YouTube Otomasyonu',
+    teamType: 'İçerik Hattı',
+    teamDescription: 'Konu bulmadan paylaşıma sıralı YouTube hattı: her adımı farklı bir ajan yapar ve bir öncekinin çıktısını devralır.',
     color: '#FF0033',
     outputType: 'text',
     outputModel: DEFAULT_MODELS.text,
     outputAutoApprove: false,
     user: { index: 0, model: 'Human', position: { x: 0, y: 0 } },
     leadAgent: {
-      id: 'yt-showrunner',
+      id: 'yt-channel-manager',
       index: 1,
-      name: 'Showrunner',
-      description: 'Picks the angle, keeps the story on track and approves the final video package.',
+      name: 'Kanal Yöneticisi',
+      description: 'Hattı sırayla yürütür: Konu Bulucu, Metin Yazarı, Seslendirmen, Video Üretici, Video Editörü, Yayıncı. Bir adım onaylanmadan sonrakini başlatmaz.',
       color: '#FF0033',
       model: DEFAULT_MODELS.text,
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
         {
-          id: 'yt-research-lead',
+          id: 'yt-topic-finder',
           index: 2,
-          name: 'Research Lead',
-          description: 'Gathers the facts, timeline and sources behind the story.',
-          color: '#DC2626',
+          name: 'Konu Bulucu',
+          description: 'Trend ve rakip kanallara bakarak tıklanacak video konusunu ve açısını bulur; 3 başlık önerisi verir.',
+          color: '#F87171',
           model: DEFAULT_MODELS.text,
-          position: { x: -500, y: 280 },
-          subagents: [
-            {
-              id: 'yt-trend-scout',
-              index: 5,
-              name: 'Trend Scout',
-              description: 'Spots trending tech topics and proven video formats in the niche.',
-              color: '#F87171',
-              model: DEFAULT_MODELS.text,
-              position: { x: -630, y: 430 }
-            },
-            {
-              id: 'yt-fact-checker',
-              index: 6,
-              name: 'Fact Checker',
-              description: 'Verifies every claim, date and number in the script.',
-              color: '#B91C1C',
-              model: DEFAULT_MODELS.text,
-              position: { x: -370, y: 430 }
-            }
-          ]
-        },
-        {
-          id: 'yt-story-lead',
-          index: 3,
-          name: 'Story Lead',
-          description: 'Shapes the narrative arc and pacing for an 8-10 minute video.',
-          color: '#2563EB',
-          model: DEFAULT_MODELS.text,
-          position: { x: 0, y: 280 },
+          humanInTheLoop: true,
+          position: { x: 0, y: 260 },
           subagents: [
             {
               id: 'yt-scriptwriter',
-              index: 7,
-              name: 'Scriptwriter',
-              description: 'Writes the timestamped voiceover script scene by scene.',
+              index: 3,
+              name: 'Metin Yazarı',
+              description: 'Konu Bulucunun onaylı konusundan zaman damgalı (DD.SS) seslendirme metnini sahne sahne yazar.',
               color: '#3B82F6',
               model: DEFAULT_MODELS.text,
-              position: { x: -130, y: 430 }
-            },
-            {
-              id: 'yt-hook-writer',
-              index: 8,
-              name: 'Hook Writer',
-              description: 'Crafts the first 30 seconds and retention beats.',
-              color: '#1D4ED8',
-              model: DEFAULT_MODELS.text,
-              position: { x: 130, y: 430 }
-            }
-          ]
-        },
-        {
-          id: 'yt-packaging-lead',
-          index: 4,
-          name: 'Packaging Lead',
-          description: 'Owns everything that earns the click.',
-          color: '#CA8A04',
-          model: DEFAULT_MODELS.text,
-          position: { x: 500, y: 280 },
-          subagents: [
-            {
-              id: 'yt-thumbnail-designer',
-              index: 9,
-              name: 'Thumbnail Designer',
-              description: 'Describes thumbnail concepts: subject, text and contrast.',
-              color: '#FACC15',
-              model: DEFAULT_MODELS.text,
-              position: { x: 370, y: 430 }
-            },
-            {
-              id: 'yt-title-seo',
-              index: 10,
-              name: 'Title & SEO Specialist',
-              description: 'Writes title options, description, chapters and tags.',
-              color: '#EAB308',
-              model: DEFAULT_MODELS.text,
-              position: { x: 630, y: 430 }
+              humanInTheLoop: true,
+              position: { x: 0, y: 390 },
+              subagents: [
+                {
+                  id: 'yt-voice-artist',
+                  index: 4,
+                  name: 'Seslendirmen',
+                  description: 'Onaylı metni seslendirmeye hazırlar: ses seçimi, hız, vurgu ve duraklama notları.',
+                  color: '#A855F7',
+                  model: DEFAULT_MODELS.text,
+                  position: { x: 0, y: 520 },
+                  subagents: [
+                    {
+                      id: 'yt-video-producer',
+                      index: 5,
+                      name: 'Video Üretici',
+                      description: 'Metin ve sese göre her sahnenin görselini/B-roll kaynağını ve üretim promptlarını belirler.',
+                      color: '#F59E0B',
+                      model: DEFAULT_MODELS.text,
+                      position: { x: 0, y: 650 },
+                      subagents: [
+                        {
+                          id: 'yt-video-editor',
+                          index: 6,
+                          name: 'Video Editörü',
+                          description: 'Sahneleri sese oturtur; geçiş, zoom, altyazı, müzik ve yazı kartı planını çıkarır.',
+                          color: '#10B981',
+                          model: DEFAULT_MODELS.text,
+                          position: { x: 0, y: 780 },
+                          subagents: [
+                            {
+                              id: 'yt-publisher',
+                              index: 7,
+                              name: 'Yayıncı',
+                              description: 'Başlık, açıklama, etiketler, bölümler, kapak fikri ve yayın saatini hazırlayıp YouTube paylaşımını planlar.',
+                              color: '#EC4899',
+                              model: DEFAULT_MODELS.text,
+                              position: { x: 0, y: 910 }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
