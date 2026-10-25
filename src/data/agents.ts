@@ -3,11 +3,11 @@ import { DEFAULT_MODELS } from '../core/llm/constants';
 
 export const USER_ID = 'user';
 export const USER_NAME = 'User';
-export const MAX_AGENTS = 11;
+export const MAX_AGENTS = 12;
 export { USER_COLOR };
 export const DEFAULT_AGENTIC_SET_ID = 'single-agent';
 /** Bump whenever built-in teams change so stale saved copies are discarded. */
-export const BUILT_IN_TEAMS_VERSION = 6;
+export const BUILT_IN_TEAMS_VERSION = 7;
 export interface AgentNode {
   id: string;
   index: number;
@@ -59,6 +59,15 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
+        {
+          id: 'claude-nova-dijital',
+          index: 12,
+          name: 'Claude',
+          description: 'Claude — kıdemli danışman ve kalite denetçisi. Teslimden önce ekibin tüm çıktılarını gözden geçirir; hataları, eksikleri ve tutarsızlıkları düzeltir, metni netleştirir, kod veya otomasyon gerektiren kısımları adım adım planlar. Lider son teslimden önce Claude’a bir inceleme görevi verir.',
+          color: '#D97757',
+          model: DEFAULT_MODELS.text,
+          position: { x: -420, y: 130 }
+        },
         {
           id: 'obsidian-nova',
           index: 11,
@@ -179,6 +188,15 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       position: { x: 0, y: 130 },
       subagents: [
         {
+          id: 'claude-youtube-otomasyonu',
+          index: 9,
+          name: 'Claude',
+          description: 'Claude — kıdemli danışman ve kalite denetçisi. Teslimden önce ekibin tüm çıktılarını gözden geçirir; hataları, eksikleri ve tutarsızlıkları düzeltir, metni netleştirir, kod veya otomasyon gerektiren kısımları adım adım planlar. Lider son teslimden önce Claude’a bir inceleme görevi verir.',
+          color: '#D97757',
+          model: DEFAULT_MODELS.text,
+          position: { x: -420, y: 130 }
+        },
+        {
           id: 'obsidian-yt',
           index: 8,
           name: 'Obsidian',
@@ -277,6 +295,15 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       position: { x: 0, y: 130 },
       subagents: [
         {
+          id: 'claude-musteri-kazanma',
+          index: 8,
+          name: 'Claude',
+          description: 'Claude — kıdemli danışman ve kalite denetçisi. Teslimden önce ekibin tüm çıktılarını gözden geçirir; hataları, eksikleri ve tutarsızlıkları düzeltir, metni netleştirir, kod veya otomasyon gerektiren kısımları adım adım planlar. Lider son teslimden önce Claude’a bir inceleme görevi verir.',
+          color: '#D97757',
+          model: DEFAULT_MODELS.text,
+          position: { x: -420, y: 130 }
+        },
+        {
           id: 'obsidian-sales',
           index: 2,
           name: 'Obsidian',
@@ -355,6 +382,15 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
+        {
+          id: 'claude-shorts-fabrikasi',
+          index: 8,
+          name: 'Claude',
+          description: 'Claude — kıdemli danışman ve kalite denetçisi. Teslimden önce ekibin tüm çıktılarını gözden geçirir; hataları, eksikleri ve tutarsızlıkları düzeltir, metni netleştirir, kod veya otomasyon gerektiren kısımları adım adım planlar. Lider son teslimden önce Claude’a bir inceleme görevi verir.',
+          color: '#D97757',
+          model: DEFAULT_MODELS.text,
+          position: { x: -420, y: 130 }
+        },
         {
           id: 'obsidian-shorts',
           index: 2,

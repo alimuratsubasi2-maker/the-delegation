@@ -8,7 +8,9 @@ import { CharacterManager } from './entities/CharacterManager';
 import { InputManager } from './input/InputManager';
 import { NavMeshManager } from './pathfinding/NavMeshManager';
 import { PoiManager } from './world/PoiManager';
-import { BRAIN_POI_ID, WorldManager } from './world/WorldManager';
+import { BRAIN_POI_ID, CLAUDE_POI_ID, WorldManager } from './world/WorldManager';
+import { MascotManager } from './entities/MascotManager';
+import { getAllCharacters } from '../data/agents';
 
 import { AgentSimulation } from './core/AgentSimulation';
 import { useCoreStore } from '../integration/store/coreStore';
@@ -34,6 +36,7 @@ export class SceneManager {
   private navMesh: NavMeshManager;
   private poiManager: PoiManager;
   private worldManager: WorldManager;
+  private mascots: MascotManager;
   private driverManager: DriverManager | null = null;
   private simulation: AgentSimulation | null = null;
 
@@ -51,6 +54,8 @@ export class SceneManager {
     this.engine = new Engine(container);
     this.stage = new Stage(this.engine.renderer.domElement);
     this.characterManager = new CharacterManager(this.stage.scene);
+    this.mascots = new MascotManager(this.stage.scene);
+    this.mascots.setCharacters(getAllCharacters(getActiveAgentSet()));
     this.navMesh = new NavMeshManager();
     this.poiManager = new PoiManager();
     this.characterManager.setPoiManager(this.poiManager);
@@ -244,6 +249,7 @@ export class SceneManager {
   }
 
   private reinitializeSimulation(activeSet: AgenticSystem) {
+    this.mascots.setCharacters(getAllCharacters(activeSet));
     if (this.simulation) this.simulation.dispose();
     this.simulation = new AgentSimulation(activeSet);
     this.setCoreHandler((idx, text) => this.simulation!.handleUserMessage(idx, text));
@@ -277,7 +283,7 @@ export class SceneManager {
     if (working) {
       // The Obsidian agent works under the floating brain crystal instead of at a desk
       const agent = getAllAgents(getActiveAgentSet()).find(a => a.index === index);
-      const id = agent?.id.startsWith('obsidian') ? BRAIN_POI_ID : `sit_work-${index}`;
+      const id = agent?.id.startsWith('obsidian') ? BRAIN_POI_ID : agent?.id.startsWith('claude') ? CLAUDE_POI_ID : `sit_work-${index}`;
       let poi = this.poiManager.getPoi(id);
       if (!poi) {
          // Smart fallback: assign a desk based on order (agent index is 1-based)
@@ -336,7 +342,11 @@ export class SceneManager {
 
   private animate() {
     this.engine.timer.update(); const delta = this.engine.timer.getDelta();
-    this.stage.update(); this.worldManager.update(delta); this.controller?.update(delta, this.engine.renderer);
+    this.stage.update(); this.worldManager.update(delta);
+    if (this.controller) {
+      const c = this.controller;
+      this.mascots.update(delta, (i) => c.getCPUPosition(i), (i) => c.getState(i) as string, (i) => this.characterManager.getFacing(i));
+    } this.controller?.update(delta, this.engine.renderer);
     this.controller?.syncFromGPU(this.engine.renderer).then((pos) => {
       if (!pos || !this.controller) return;
       this.controller.updatePaths(pos); this.driverManager?.update(pos, delta);

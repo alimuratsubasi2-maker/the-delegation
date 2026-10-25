@@ -446,6 +446,8 @@ export class CharacterManager {
       instancedMesh.receiveShadow = true;
       // Body renders first (renderOrder 0), features after (renderOrder 1)
       instancedMesh.renderOrder = name.toLowerCase().includes('body') ? 0 : 1;
+      // Pixel mascots (MascotManager) are drawn instead; the skinned crowd keeps simulating
+      instancedMesh.visible = false;
       this.scene.add(instancedMesh);
       this.instancedMeshes.push(instancedMesh);
     }
@@ -605,6 +607,12 @@ export class CharacterManager {
   public setFacing(index: number, x: number, z: number) {
     if (!this.agentStateBuffer || index < 0 || index >= this.instanceCount) return;
     this.agentStateBuffer.setFacing(index, x, z);
+  }
+
+  /** Facing direction assigned by the sim while idle/seated (unit vector), or null. */
+  public getFacing(index: number): { x: number; z: number } | null {
+    if (!this.agentStateBuffer || index < 0 || index >= this.instanceCount) return null;
+    return this.agentStateBuffer.getWaypoint(index);
   }
 
   /** Force a specific orientation based on a quaternion. */

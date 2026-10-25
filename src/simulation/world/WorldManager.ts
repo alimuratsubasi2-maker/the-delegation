@@ -23,6 +23,7 @@ const WARM_LAMP = 0xffb347;
 const BRAIN_POSITION = new THREE.Vector3(WING_OFFSET_X / 2, 0, 0);
 const BRAIN_HOVER = 2.5;
 export const BRAIN_POI_ID = 'brain-core';
+export const CLAUDE_POI_ID = 'claude-spot';
 /** Where the user's own character appears (centre of the office, beside the crystal). */
 export const PLAYER_SPAWN = new THREE.Vector3(WING_OFFSET_X / 2 - 1.2, 0, 1.0);
 
@@ -194,6 +195,14 @@ export class WorldManager {
       id: BRAIN_POI_ID,
       position: BRAIN_POSITION.clone().add(new THREE.Vector3(0, 0, 0.85)),
       quaternion: facing,
+      arrivalState: 'idle',
+      occupiedBy: null,
+    });
+    // Claude's review spot, beside the crystal
+    this.poiManager.addPoi({
+      id: CLAUDE_POI_ID,
+      position: BRAIN_POSITION.clone().add(new THREE.Vector3(1.3, 0, 0.6)),
+      quaternion: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2),
       arrivalState: 'idle',
       occupiedBy: null,
     });

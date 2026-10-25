@@ -61,7 +61,7 @@ export class Stage {
     dirLight.shadow.camera.bottom = -15;
     dirLight.shadow.camera.right = 15;
     dirLight.shadow.camera.left = -15;
-    dirLight.shadow.mapSize.set(3072, 3072);
+    dirLight.shadow.mapSize.set(2048, 2048);
     dirLight.shadow.bias = -0.0001;
     dirLight.shadow.radius = 2;
     dirLight.shadow.autoUpdate = true;
