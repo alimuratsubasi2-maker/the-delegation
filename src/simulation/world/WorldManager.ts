@@ -18,6 +18,7 @@ const SEAM_EPS = 0.01;
 // ── Neon office theme ─────────────────────────────────────────
 const NEON = 0xa855f7;
 const NEON_LIGHT = 0xd8b4fe;
+const WARM_LAMP = 0xffb347;
 /** Where the Obsidian "brain" floats: the hall between both rooms. */
 const BRAIN_POSITION = new THREE.Vector3(WING_OFFSET_X / 2, 0, 0);
 const BRAIN_HOVER = 2.5;
@@ -25,17 +26,20 @@ export const BRAIN_POI_ID = 'brain-core';
 
 type NeonStyle = { color: THREE.ColorRepresentation; roughness: number; metalness: number; emissive?: THREE.ColorRepresentation; emissiveIntensity?: number };
 
-/** Black / deep-violet materials with neon accents, chosen by mesh name. */
+/** Night office: navy floor, dark wood desks, warm desk lamps, violet ambience. */
 function neonStyleFor(name: string): NeonStyle {
-  if (name.startsWith('colored')) return { color: NEON, emissive: NEON, emissiveIntensity: 2.5, roughness: 0.4, metalness: 0 };
-  if (name.includes('floor')) return { color: 0x0b0a12, roughness: 0.35, metalness: 0.6 };
-  if (name.includes('pc') || name.includes('laptop')) return { color: 0x0d0c14, emissive: 0x7c3aed, emissiveIntensity: 0.7, roughness: 0.3, metalness: 0.5 };
-  if (name.includes('flexo')) return { color: 0x1a1625, emissive: 0xc084fc, emissiveIntensity: 1.6, roughness: 0.4, metalness: 0.4 };
-  if (name.includes('board')) return { color: 0x14111d, emissive: 0x4c1d95, emissiveIntensity: 0.5, roughness: 0.3, metalness: 0.4 };
-  if (name.includes('sofa')) return { color: 0x2e1a4f, roughness: 0.7, metalness: 0.1 };
-  if (name.includes('chair')) return { color: 0x2a2338, roughness: 0.5, metalness: 0.4 };
-  if (name.includes('plant')) return { color: 0x1f3a33, roughness: 0.8, metalness: 0.1 };
-  return { color: 0x1a1724, roughness: 0.4, metalness: 0.55 };
+  if (name.startsWith('colored')) return { color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.9, roughness: 0.5, metalness: 0 };
+  if (name.includes('floor')) return { color: 0x141c33, roughness: 0.55, metalness: 0.25 };
+  if (name.includes('pc') || name.includes('laptop')) return { color: 0x12141c, emissive: 0x6366f1, emissiveIntensity: 0.45, roughness: 0.3, metalness: 0.5 };
+  if (name.includes('flexo')) return { color: 0x2b2b2b, emissive: WARM_LAMP, emissiveIntensity: 1.8, roughness: 0.5, metalness: 0.3 };
+  if (name.includes('board')) return { color: 0x1c2338, emissive: 0x4c1d95, emissiveIntensity: 0.25, roughness: 0.4, metalness: 0.3 };
+  if (name.includes('desk') || name.includes('table') || name.includes('counter') || name.includes('cabinet')) {
+    return { color: 0x3d2b20, roughness: 0.75, metalness: 0.05 };
+  }
+  if (name.includes('sofa')) return { color: 0x3b2a5c, roughness: 0.85, metalness: 0 };
+  if (name.includes('chair')) return { color: 0x2b3040, roughness: 0.6, metalness: 0.3 };
+  if (name.includes('plant')) return { color: 0x26442f, roughness: 0.85, metalness: 0 };
+  return { color: 0x2b3142, roughness: 0.6, metalness: 0.3 };
 }
 
 export class WorldManager {
@@ -95,25 +99,16 @@ export class WorldManager {
     this.addBrainPois();
   }
 
-  /** Neon frame posts, the floating Obsidian crystal and its pedestal. */
+  /** Warm desk-cluster lighting, violet ambience and the floating Obsidian crystal. */
   private addNeonDecor(): void {
     if (!this.office) return;
-    const neon = new THREE.MeshStandardNodeMaterial({ color: NEON, emissive: NEON, emissiveIntensity: 2.5 });
+    const neon = new THREE.MeshStandardNodeMaterial({ color: NEON, emissive: NEON, emissiveIntensity: 1.6 });
 
-    // Corner and seam posts framing the whole floor
-    const postGeo = new THREE.BoxGeometry(0.07, 2.4, 0.07);
-    for (const x of [-5.1, WING_OFFSET_X / 2, WING_OFFSET_X + 5.1]) {
-      for (const z of [-5.1, 5.1]) {
-        const post = new THREE.Mesh(postGeo, neon);
-        post.position.set(x, 1.2, z);
-        this.office.add(post);
-      }
-    }
-    // Top rails connecting the posts
-    for (const z of [-5.1, 5.1]) {
-      const rail = new THREE.Mesh(new THREE.BoxGeometry(WING_OFFSET_X + 10.2, 0.05, 0.05), neon);
-      rail.position.set(WING_OFFSET_X / 2, 2.4, z);
-      this.office.add(rail);
+    // Warm pools of light over each desk cluster (base room and its rotated copy)
+    for (const [x, z] of [[2.4, -2.3], [WING_OFFSET_X - 2.4, 2.3], [-3.6, 4.2], [WING_OFFSET_X + 3.6, -4.2]]) {
+      const lamp = new THREE.PointLight(WARM_LAMP, 5, 5, 1.6);
+      lamp.position.set(x, 1.6, z);
+      this.office.add(lamp);
     }
 
     // Obsidian brain: glowing crystal floating above the hall between both rooms
@@ -142,9 +137,9 @@ export class WorldManager {
     brain.add(ring);
     this.office.add(brain);
 
-    // Soft violet fill over each room
+    // Soft violet ambience over each room
     for (const x of [0, WING_OFFSET_X]) {
-      const fill = new THREE.PointLight(0x8b5cf6, 4, 12, 1.2);
+      const fill = new THREE.PointLight(0x7c3aed, 3, 12, 1.2);
       fill.position.set(x, 3.2, 0);
       this.office.add(fill);
     }

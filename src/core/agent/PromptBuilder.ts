@@ -8,12 +8,13 @@ export class PromptBuilder {
    */
   public static buildSystemPrompt(agent: AgentNode, phase: string, brief: string, allAgents: any[]): string {
     const isLead = agent.index === 1;
+    const isBrain = agent.id.startsWith('obsidian');
     const team = allAgents
       .map((a: any) => `[${a.data.index}] ${a.data.name}`)
       .join(', ');
 
     const objectives = {
-      idle: isLead ? 'Chat with [0] to define brief, then set_user_brief.' : 'Wait for Lead to start.',
+      idle: isLead ? 'Chat with [0] to define brief, then set_user_brief.' : isBrain ? 'Answer [0] about their projects, rules and past work using OBSIDIAN BRAIN. Cite note names.' : 'Wait for Lead to start.',
       working: isLead ? 'Manage board. deliver_project when all Done.' : 'Complete tasks.',
       done: 'Project finished.'
     };
@@ -72,7 +73,7 @@ Team: User (0), ${team}
 KANBAN:
 ${board}
 RULES:
-1. MAX 30 WORDS for chat. Systemic outputs ('complete_task', 'deliver_project', and the task titles/descriptions you create) MUST be under 100 WORDS. NO conversational filler, intros, outros, or self-attribution ("I have done..."). Focus exclusively on core data and synthesis.
+1. MAX ${isBrain ? 150 : 30} WORDS for chat. Systemic outputs ('complete_task', 'deliver_project', and the task titles/descriptions you create) MUST be under 100 WORDS. NO conversational filler, intros, outros, or self-attribution ("I have done..."). Focus exclusively on core data and synthesis.
 2. Tools only in WORKING (except set_user_brief in IDLE).
 3. QUALITY: If your node has 'Human-in-the-loop' enabled, your 'complete_task' result will be reviewed by the user before completion. 
 4. NO META-TALK: Avoid "I have finished X", "Here is the result". Use the tool payload for content and Chat for conversation only.${outputInstruction}${imageInstruction}

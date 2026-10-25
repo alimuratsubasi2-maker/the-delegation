@@ -47,10 +47,10 @@ export class Stage {
 
   private setupLights() {
     // Keep ambient low so directional shadows have visible contrast
-    const ambientLight = new THREE.AmbientLight(0xc4b5fd, 0.55 * Math.PI);
+    const ambientLight = new THREE.AmbientLight(0x8090c8, 0.6 * Math.PI);
     this.scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xe9d5ff, 0.55 * Math.PI);
+    const dirLight = new THREE.DirectionalLight(0xb4c0ff, 0.45 * Math.PI);
     dirLight.position.set(OFFICE_CENTER_X + 10, 20, 10);
     dirLight.target.position.set(OFFICE_CENTER_X, 0, 0);
     this.scene.add(dirLight.target);
