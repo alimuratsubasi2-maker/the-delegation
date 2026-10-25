@@ -1,4 +1,4 @@
-import { Brain, Info, KeyRound, Maximize2, Settings } from 'lucide-react';
+import { Brain, Info, KeyRound, Maximize2, Settings, Smartphone } from 'lucide-react';
 import React, { useState } from 'react';
 import packageJson from '../../package.json';
 import { useCoreStore } from '../integration/store/coreStore';
@@ -6,6 +6,8 @@ import { useUiStore } from '../integration/store/uiStore';
 import BYOKModal from './BYOKModal';
 import InfoModal from './InfoModal';
 import ObsidianModal from './ObsidianModal';
+import LiveShareModal from './LiveShareModal';
+import { useLiveStore } from '../core/live/LiveShare';
 import { useObsidianStore } from '../core/obsidian/ObsidianBrain';
 
 const version = packageJson.version;
@@ -16,6 +18,8 @@ const Header: React.FC = () => {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isObsidianOpen, setIsObsidianOpen] = useState(false);
   const obsidianStatus = useObsidianStore((s) => s.status);
+  const [isLiveOpen, setIsLiveOpen] = useState(false);
+  const liveEnabled = useLiveStore((s) => s.enabled);
   const hasKey = !!llmConfig.apiKey;
 
   const handleFullscreen = () => {
@@ -94,6 +98,16 @@ const Header: React.FC = () => {
             <Maximize2 size={16} />
           </button>
           <button
+            onClick={() => setIsLiveOpen(true)}
+            className="relative text-zinc-400 hover:text-violet-600 transition-colors p-1"
+            title="Telefondan Takip"
+          >
+            <Smartphone size={16} className={liveEnabled ? 'text-emerald-400' : ''} />
+            {liveEnabled && (
+              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            )}
+          </button>
+          <button
             onClick={() => setIsObsidianOpen(true)}
             className="relative text-zinc-400 hover:text-violet-600 transition-colors p-1"
             title="Obsidian Beyni"
@@ -118,6 +132,10 @@ const Header: React.FC = () => {
 
       {isInfoOpen && (
         <InfoModal key="info-modal" onClose={() => setIsInfoOpen(false)} />
+      )}
+
+      {isLiveOpen && (
+        <LiveShareModal key="live-modal" onClose={() => setIsLiveOpen(false)} />
       )}
 
       {isObsidianOpen && (

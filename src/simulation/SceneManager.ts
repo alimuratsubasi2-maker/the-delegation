@@ -16,6 +16,7 @@ import { getActiveAgentSet, useTeamStore } from '../integration/store/teamStore'
 import { useUiStore } from '../integration/store/uiStore';
 import { AgentBehavior, ChatMessage } from '../types';
 import { BUBBLE_Y_OFFSET } from './constants';
+import { setLiveChatHandler } from '../core/live/LiveShare';
 
 /**
  * SceneManager — Visual Integration Layer.
@@ -61,7 +62,16 @@ export class SceneManager {
     const activeSet = getActiveAgentSet();
     this.simulation = new AgentSimulation(activeSet);
     this.setCoreHandler((idx, text) => this.simulation!.handleUserMessage(idx, text));
-    
+
+    // Messages typed on the phone tracking page go to the lead agent
+    setLiveChatHandler((text) => {
+      const lead = getActiveAgentSet().leadAgent.index;
+      useCoreStore.setState((s) => ({
+        agentHistories: { ...s.agentHistories, [lead]: [...(s.agentHistories[lead] || []), { role: 'user', content: `📱 ${text}` }] }
+      }));
+      this.coreHandler?.(lead, text);
+    });
+
     this.init();
     this.startWatchingCoreStore();
   }
