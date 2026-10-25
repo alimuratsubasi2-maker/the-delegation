@@ -2,8 +2,6 @@
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as THREE from 'three/webgpu';
-import { getAgentSet } from '../../data/agents';
-import { useTeamStore } from '../../integration/store/teamStore';
 import { DRACO_LIB_PATH } from '../constants';
 import { NavMeshManager } from '../pathfinding/NavMeshManager';
 import { PoiManager } from './PoiManager';
@@ -17,8 +15,33 @@ const WING_SEAT_OFFSET = 4;
 /** Tolerance used to detect navmesh vertices lying on the seam edge. */
 const SEAM_EPS = 0.01;
 
+// ── Neon office theme ─────────────────────────────────────────
+const NEON = 0xa855f7;
+const NEON_LIGHT = 0xd8b4fe;
+/** Where the Obsidian "brain" floats: the hall between both rooms. */
+const BRAIN_POSITION = new THREE.Vector3(WING_OFFSET_X / 2, 0, 0);
+const BRAIN_HOVER = 2.5;
+export const BRAIN_POI_ID = 'brain-core';
+
+type NeonStyle = { color: THREE.ColorRepresentation; roughness: number; metalness: number; emissive?: THREE.ColorRepresentation; emissiveIntensity?: number };
+
+/** Black / deep-violet materials with neon accents, chosen by mesh name. */
+function neonStyleFor(name: string): NeonStyle {
+  if (name.startsWith('colored')) return { color: NEON, emissive: NEON, emissiveIntensity: 2.5, roughness: 0.4, metalness: 0 };
+  if (name.includes('floor')) return { color: 0x0b0a12, roughness: 0.35, metalness: 0.6 };
+  if (name.includes('pc') || name.includes('laptop')) return { color: 0x0d0c14, emissive: 0x7c3aed, emissiveIntensity: 0.7, roughness: 0.3, metalness: 0.5 };
+  if (name.includes('flexo')) return { color: 0x1a1625, emissive: 0xc084fc, emissiveIntensity: 1.6, roughness: 0.4, metalness: 0.4 };
+  if (name.includes('board')) return { color: 0x14111d, emissive: 0x4c1d95, emissiveIntensity: 0.5, roughness: 0.3, metalness: 0.4 };
+  if (name.includes('sofa')) return { color: 0x2e1a4f, roughness: 0.7, metalness: 0.1 };
+  if (name.includes('chair')) return { color: 0x2a2338, roughness: 0.5, metalness: 0.4 };
+  if (name.includes('plant')) return { color: 0x1f3a33, roughness: 0.8, metalness: 0.1 };
+  return { color: 0x1a1724, roughness: 0.4, metalness: 0.55 };
+}
+
 export class WorldManager {
   private office: THREE.Group | null = null;
+  private brainCrystal: THREE.Mesh | null = null;
+  private brainTime = 0;
 
   constructor(
     private scene: THREE.Scene,
@@ -44,11 +67,6 @@ export class WorldManager {
       this.navMesh.loadFromGeometry(this.buildExpandedNavMesh(baseNavMesh, wing.matrixWorld));
     }
 
-    // Get current AgentSet color
-    const { selectedAgentSetId, customSystems } = useTeamStore.getState();
-    const activeSet = getAgentSet(selectedAgentSetId, customSystems);
-    const themeColor = new THREE.Color(activeSet.color);
-
     // Setup meshes (navmesh is hidden, already loaded above)
     this.office.traverse((child) => {
       if ((child as any).isMesh) {
@@ -64,23 +82,100 @@ export class WorldManager {
           // Apply specific material for WebGPU shadow compatibility as requested
           if (mesh.material) {
             const oldMat = mesh.material as THREE.MeshStandardMaterial;
-
-            // Check if mesh name starts with "colored" to apply thematic color
-            const isColoredMesh = name.startsWith('colored');
-
-            mesh.material = new THREE.MeshStandardNodeMaterial({
-              color: isColoredMesh ? themeColor : oldMat.color,
-              map: oldMat.map,
-              roughness: 1,
-              metalness: 0.35,
-            });
+            mesh.material = new THREE.MeshStandardNodeMaterial({ map: oldMat.map, ...neonStyleFor(name) });
           }
         }
       }
     });
 
+    this.addNeonDecor();
+
     // Extract Points of Interest
     this.poiManager.loadFromGlb(this.office);
+    this.addBrainPois();
+  }
+
+  /** Neon frame posts, the floating Obsidian crystal and its pedestal. */
+  private addNeonDecor(): void {
+    if (!this.office) return;
+    const neon = new THREE.MeshStandardNodeMaterial({ color: NEON, emissive: NEON, emissiveIntensity: 2.5 });
+
+    // Corner and seam posts framing the whole floor
+    const postGeo = new THREE.BoxGeometry(0.07, 2.4, 0.07);
+    for (const x of [-5.1, WING_OFFSET_X / 2, WING_OFFSET_X + 5.1]) {
+      for (const z of [-5.1, 5.1]) {
+        const post = new THREE.Mesh(postGeo, neon);
+        post.position.set(x, 1.2, z);
+        this.office.add(post);
+      }
+    }
+    // Top rails connecting the posts
+    for (const z of [-5.1, 5.1]) {
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(WING_OFFSET_X + 10.2, 0.05, 0.05), neon);
+      rail.position.set(WING_OFFSET_X / 2, 2.4, z);
+      this.office.add(rail);
+    }
+
+    // Obsidian brain: glowing crystal floating above the hall between both rooms
+    const brain = new THREE.Group();
+    brain.position.copy(BRAIN_POSITION);
+    const crystalMat = new THREE.MeshStandardNodeMaterial({
+      color: 0x2e1065, emissive: NEON, emissiveIntensity: 1.6, roughness: 0.15, metalness: 0.6, flatShading: true,
+    });
+    this.brainCrystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.42, 0), crystalMat);
+    this.brainCrystal.scale.set(1, 1.5, 1);
+    this.brainCrystal.position.y = BRAIN_HOVER;
+    const shell = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.6, 0),
+      new THREE.MeshBasicNodeMaterial({ color: NEON_LIGHT, wireframe: true, transparent: true, opacity: 0.5 }),
+    );
+    this.brainCrystal.add(shell);
+    brain.add(this.brainCrystal);
+
+    const glow = new THREE.PointLight(NEON, 6, 7, 1.5);
+    glow.position.y = BRAIN_HOVER;
+    brain.add(glow);
+
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.68, 48), neon);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.015;
+    brain.add(ring);
+    this.office.add(brain);
+
+    // Soft violet fill over each room
+    for (const x of [0, WING_OFFSET_X]) {
+      const fill = new THREE.PointLight(0x8b5cf6, 4, 12, 1.2);
+      fill.position.set(x, 3.2, 0);
+      this.office.add(fill);
+    }
+  }
+
+  /** Work spot for the Obsidian agent (under the crystal) plus its spawn point. */
+  private addBrainPois(): void {
+    const facing = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+    this.poiManager.addPoi({
+      id: BRAIN_POI_ID,
+      position: BRAIN_POSITION.clone().add(new THREE.Vector3(0, 0, 0.85)),
+      quaternion: facing,
+      arrivalState: 'idle',
+      occupiedBy: null,
+    });
+    this.poiManager.addPoi({
+      id: 'idle-spawn-brain',
+      position: BRAIN_POSITION.clone().add(new THREE.Vector3(0, 0, -0.85)),
+      quaternion: new THREE.Quaternion(),
+      arrivalState: 'idle',
+      occupiedBy: null,
+    });
+  }
+
+  /** Animates the floating crystal. */
+  public update(delta: number): void {
+    if (!this.brainCrystal) return;
+    this.brainTime += delta;
+    this.brainCrystal.rotation.y += delta * 0.6;
+    this.brainCrystal.position.y = BRAIN_HOVER + Math.sin(this.brainTime * 1.4) * 0.12;
+    (this.brainCrystal.material as THREE.MeshStandardNodeMaterial).emissiveIntensity = 1.4 + Math.sin(this.brainTime * 2.2) * 0.5;
   }
 
   /**
@@ -174,27 +269,8 @@ export class WorldManager {
     return merged;
   }
 
-  public updateThemeColor(color: string): void {
-    if (!this.office) return;
-
-    const themeColor = new THREE.Color(color);
-
-    this.office.traverse((child) => {
-      if ((child as any).isMesh) {
-        const mesh = child as THREE.Mesh;
-        const name = mesh.name.toLowerCase();
-
-        if (name.startsWith('colored') && mesh.material) {
-          // Update existing material color if it's a NodeMaterial
-          // or replace it if needed. Since we already replaced them in load(),
-          // we can just update the color property.
-          if ((mesh.material as any).color) {
-            (mesh.material as any).color.copy(themeColor);
-          }
-        }
-      }
-    });
-  }
+  /** The office keeps its purple neon border for every team, so team color is ignored. */
+  public updateThemeColor(_color: string): void {}
 
   public getOffice(): THREE.Group | null {
     return this.office;

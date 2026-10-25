@@ -6,6 +6,7 @@ import { useTeamStore } from '../../integration/store/teamStore';
 import { ToolRegistry } from './ToolRegistry';
 import { PromptBuilder } from './PromptBuilder';
 import { AGENTIC_SETS, AgentNode } from '../../data/agents';
+import { buildBrainContext } from '../obsidian/ObsidianBrain';
 
 export interface BrainHost {
   data: AgentNode;
@@ -77,7 +78,16 @@ export class AgentBrain {
         });
       }
       const allAgents = this.host.simulation.getAllAgents();
-      const systemPrompt = PromptBuilder.buildSystemPrompt(this.host.data, core.phase, core.userBrief, allAgents);
+
+      // Pull relevant knowledge from the user's Obsidian vault for what this agent is handling now
+      const lastUserMsg = [...messages].reverse().find(m => m.role === 'user' && !m.metadata?.internal)?.content || '';
+      const currentTask = core.tasks.find(t => t.id === this.host.getCurrentTaskId());
+      const brainQuery = [currentTask?.title, currentTask?.description, lastUserMsg, core.userBrief]
+        .filter(Boolean).join(' ').slice(0, 600);
+      const isBrainAgent = this.host.data.index === 1 || this.host.data.id.startsWith('obsidian');
+      const brainContext = await buildBrainContext(brainQuery, isBrainAgent);
+
+      const systemPrompt = PromptBuilder.buildSystemPrompt(this.host.data, core.phase, core.userBrief, allAgents) + brainContext;
       const toolDefs = options.tools || ToolRegistry.getDefinitions(this.host.data.index, core.phase, this.host.data.subagents?.length || 0);
 
       // 3. Log and Execute LLM Call

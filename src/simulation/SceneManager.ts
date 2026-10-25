@@ -8,7 +8,7 @@ import { CharacterManager } from './entities/CharacterManager';
 import { InputManager } from './input/InputManager';
 import { NavMeshManager } from './pathfinding/NavMeshManager';
 import { PoiManager } from './world/PoiManager';
-import { WorldManager } from './world/WorldManager';
+import { BRAIN_POI_ID, WorldManager } from './world/WorldManager';
 
 import { AgentSimulation } from './core/AgentSimulation';
 import { useCoreStore } from '../integration/store/coreStore';
@@ -265,7 +265,9 @@ export class SceneManager {
   public setNpcWorking(index: number, working: boolean): void {
     if (!this.controller) return;
     if (working) {
-      const id = `sit_work-${index}`;
+      // The Obsidian agent works under the floating brain crystal instead of at a desk
+      const agent = getAllAgents(getActiveAgentSet()).find(a => a.index === index);
+      const id = agent?.id.startsWith('obsidian') ? BRAIN_POI_ID : `sit_work-${index}`;
       let poi = this.poiManager.getPoi(id);
       if (!poi) {
          // Smart fallback: assign a desk based on order (agent index is 1-based)
@@ -324,7 +326,7 @@ export class SceneManager {
 
   private animate() {
     this.engine.timer.update(); const delta = this.engine.timer.getDelta();
-    this.stage.update(); this.controller?.update(delta, this.engine.renderer);
+    this.stage.update(); this.worldManager.update(delta); this.controller?.update(delta, this.engine.renderer);
     this.controller?.syncFromGPU(this.engine.renderer).then((pos) => {
       if (!pos || !this.controller) return;
       this.controller.updatePaths(pos); this.driverManager?.update(pos, delta);

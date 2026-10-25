@@ -3,7 +3,7 @@ import { DEFAULT_MODELS } from '../core/llm/constants';
 
 export const USER_ID = 'user';
 export const USER_NAME = 'User';
-export const MAX_AGENTS = 10;
+export const MAX_AGENTS = 11;
 export { USER_COLOR };
 export const DEFAULT_AGENTIC_SET_ID = 'single-agent';
 export interface AgentNode {
@@ -51,12 +51,21 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       id: 'nova-ceo',
       index: 1,
       name: 'Ajans Müdürü',
-      description: 'Müşteri talebini web/uygulama, AI reklam ve video edit ekiplerine böler, TL fiyat ve teslim planını çıkarır, son teslimi onaylar.',
+      description: 'Müşteri talebini web/uygulama, AI reklam ve video edit ekiplerine böler, TL fiyat ve teslim planını çıkarır, son teslimi onaylar. İlk görevi her zaman Obsidian’a verir: kullanıcının geçmiş projelerinden ilgili bağlamı toplatır.',
       color: '#7C3AED',
       model: DEFAULT_MODELS.text,
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
+        {
+          id: 'obsidian-nova',
+          index: 11,
+          name: 'Obsidian',
+          description: 'Ofisin beyni: kullanıcının Obsidian kasasındaki tüm projeleri, akıl haritalarını, kuralları ve tercihleri bilir. Her işin başında ekibe geçmiş projelerden ilgili bağlamı, kuralları ve kaçınılacak hataları özetler.',
+          color: '#A855F7',
+          model: DEFAULT_MODELS.text,
+          position: { x: 420, y: 130 }
+        },
         {
           id: 'nova-web-lead',
           index: 2,
@@ -161,12 +170,21 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       id: 'yt-channel-manager',
       index: 1,
       name: 'Kanal Yöneticisi',
-      description: 'Hattı sırayla yürütür: Konu Bulucu, Metin Yazarı, Seslendirmen, Video Üretici, Video Editörü, Yayıncı. Bir adım onaylanmadan sonrakini başlatmaz.',
+      description: 'Hattı sırayla yürütür: Konu Bulucu, Metin Yazarı, Seslendirmen, Video Üretici, Video Editörü, Yayıncı. Bir adım onaylanmadan sonrakini başlatmaz. İlk görevi her zaman Obsidian’a verir: kanalın geçmiş videoları, kuralları ve kazanan formülünü toplatır.',
       color: '#FF0033',
       model: DEFAULT_MODELS.text,
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
+        {
+          id: 'obsidian-yt',
+          index: 8,
+          name: 'Obsidian',
+          description: 'Ofisin beyni: kullanıcının Obsidian kasasındaki tüm projeleri, akıl haritalarını, kuralları ve tercihleri bilir. Her işin başında ekibe geçmiş projelerden ilgili bağlamı, kuralları ve kaçınılacak hataları özetler.',
+          color: '#A855F7',
+          model: DEFAULT_MODELS.text,
+          position: { x: 320, y: 260 }
+        },
         {
           id: 'yt-topic-finder',
           index: 2,

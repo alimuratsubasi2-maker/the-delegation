@@ -1,10 +1,12 @@
-import { Info, KeyRound, Maximize2, Settings } from 'lucide-react';
+import { Brain, Info, KeyRound, Maximize2, Settings } from 'lucide-react';
 import React, { useState } from 'react';
 import packageJson from '../../package.json';
 import { useCoreStore } from '../integration/store/coreStore';
 import { useUiStore } from '../integration/store/uiStore';
 import BYOKModal from './BYOKModal';
 import InfoModal from './InfoModal';
+import ObsidianModal from './ObsidianModal';
+import { useObsidianStore } from '../core/obsidian/ObsidianBrain';
 
 const version = packageJson.version;
 
@@ -12,6 +14,8 @@ const Header: React.FC = () => {
   const { llmConfig, isBYOKOpen, setBYOKOpen } = useUiStore();
   const { setViewMode } = useCoreStore();
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [isObsidianOpen, setIsObsidianOpen] = useState(false);
+  const obsidianStatus = useObsidianStore((s) => s.status);
   const hasKey = !!llmConfig.apiKey;
 
   const handleFullscreen = () => {
@@ -90,6 +94,16 @@ const Header: React.FC = () => {
             <Maximize2 size={16} />
           </button>
           <button
+            onClick={() => setIsObsidianOpen(true)}
+            className="relative text-zinc-400 hover:text-violet-600 transition-colors p-1"
+            title="Obsidian Beyni"
+          >
+            <Brain size={16} className={obsidianStatus === 'connected' ? 'text-violet-600' : obsidianStatus === 'error' ? 'text-red-400' : ''} />
+            {obsidianStatus === 'connected' && (
+              <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-violet-500 shadow-[0_0_6px_#a855f7]" />
+            )}
+          </button>
+          <button
             onClick={() => setBYOKOpen(true)}
             className="relative text-zinc-400 hover:text-darkDelegation transition-colors p-1"
             title="API Key (BYOK)"
@@ -104,6 +118,10 @@ const Header: React.FC = () => {
 
       {isInfoOpen && (
         <InfoModal key="info-modal" onClose={() => setIsInfoOpen(false)} />
+      )}
+
+      {isObsidianOpen && (
+        <ObsidianModal key="obsidian-modal" onClose={() => setIsObsidianOpen(false)} />
       )}
 
       {isBYOKOpen && (
