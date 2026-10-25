@@ -1,6 +1,10 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as THREE from 'three/webgpu';
 import { SCENE_BACKGROUND_COLOR } from '../constants';
+import { WING_OFFSET_X } from '../world/WorldManager';
+
+/** Center of the expanded office (base room + east wing). */
+const OFFICE_CENTER_X = WING_OFFSET_X / 2;
 
 export class Stage {
   public scene: THREE.Scene;
@@ -8,14 +12,14 @@ export class Stage {
   public controls: OrbitControls;
 
   private followTarget: THREE.Vector3 | null = null;
-  private readonly defaultTarget = new THREE.Vector3(0, 0.8, 0);
+  private readonly defaultTarget = new THREE.Vector3(OFFICE_CENTER_X, 0.8, 0);
 
   constructor(rendererElement: HTMLElement) {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(SCENE_BACKGROUND_COLOR);
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
-    this.camera.position.set(10, 8, 15);
+    this.camera.position.set(OFFICE_CENTER_X + 12, 11, 19);
 
     this.controls = new OrbitControls(this.camera, rendererElement);
     this.controls.enableDamping = true;
@@ -27,8 +31,8 @@ export class Stage {
     this.controls.minPolarAngle = Math.PI / 4.5;
     this.controls.maxPolarAngle = Math.PI / 2.4;
     this.controls.minDistance = 3;
-    this.controls.maxDistance = 10;
-    this.controls.target.set(0, 0.8, 0);
+    this.controls.maxDistance = 30;
+    this.controls.target.set(OFFICE_CENTER_X, 0.8, 0);
 
     this.controls.addEventListener('start', () => {
       rendererElement.style.cursor = 'grabbing';
@@ -47,15 +51,17 @@ export class Stage {
     this.scene.add(ambientLight);
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.5 * Math.PI);
-    dirLight.position.set(10, 20, 10);
+    dirLight.position.set(OFFICE_CENTER_X + 10, 20, 10);
+    dirLight.target.position.set(OFFICE_CENTER_X, 0, 0);
+    this.scene.add(dirLight.target);
     dirLight.castShadow = true;
     dirLight.shadow.camera.near = 0.1;
     dirLight.shadow.camera.far = 100;
-    dirLight.shadow.camera.top = 10;
-    dirLight.shadow.camera.bottom = -10;
-    dirLight.shadow.camera.right = 10;
-    dirLight.shadow.camera.left = -10;
-    dirLight.shadow.mapSize.set(2048, 2048);
+    dirLight.shadow.camera.top = 15;
+    dirLight.shadow.camera.bottom = -15;
+    dirLight.shadow.camera.right = 15;
+    dirLight.shadow.camera.left = -15;
+    dirLight.shadow.mapSize.set(3072, 3072);
     dirLight.shadow.bias = -0.0001;
     dirLight.shadow.radius = 2;
     dirLight.shadow.autoUpdate = true;
