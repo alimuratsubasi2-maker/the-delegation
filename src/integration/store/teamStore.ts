@@ -1,7 +1,7 @@
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { AgenticSystem, DEFAULT_AGENTIC_SET_ID, getAgentSet } from '../../data/agents';
+import { AGENTIC_SETS, AgenticSystem, BUILT_IN_TEAMS_VERSION, DEFAULT_AGENTIC_SET_ID, getAgentSet } from '../../data/agents';
 
 export type AgentSet = AgenticSystem;
 
@@ -62,6 +62,15 @@ export const useTeamStore = create<TeamState>()(
     {
       name: 'team-storage',
       storage: createJSONStorage(() => localStorage),
+      // Edits to a built-in team are stored as a full copy under the same id, which
+      // would hide every later update of that team. Drop those copies on each release.
+      version: BUILT_IN_TEAMS_VERSION,
+      migrate: (persisted: any) => ({
+        ...persisted,
+        customSystems: (persisted?.customSystems || []).filter(
+          (cs: AgenticSystem) => !AGENTIC_SETS.some((b) => b.id === cs.id)
+        ),
+      }),
     }
   )
 );

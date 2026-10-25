@@ -6,6 +6,8 @@ export const USER_NAME = 'User';
 export const MAX_AGENTS = 11;
 export { USER_COLOR };
 export const DEFAULT_AGENTIC_SET_ID = 'single-agent';
+/** Bump whenever built-in teams change so stale saved copies are discarded. */
+export const BUILT_IN_TEAMS_VERSION = 4;
 export interface AgentNode {
   id: string;
   index: number;
