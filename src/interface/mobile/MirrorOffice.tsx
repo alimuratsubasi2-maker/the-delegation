@@ -71,6 +71,10 @@ const MirrorOffice: React.FC<{ snapshot: MirrorSnapshot | null; onUnsupported?: 
     return () => manager?.dispose();
   }, []);
 
+  useEffect(() => {
+    if (snapshot) applyMirrorSnapshot(snapshot);
+  }, [snapshot]);
+
   if (failed) {
     return (
       <div className="p-5 m-4 rounded-2xl bg-[#121a2f] border border-[#222c47] text-sm text-[#b4bace] leading-relaxed">
@@ -78,10 +82,6 @@ const MirrorOffice: React.FC<{ snapshot: MirrorSnapshot | null; onUnsupported?: 
       </div>
     );
   }
-
-  useEffect(() => {
-    if (snapshot) applyMirrorSnapshot(snapshot);
-  }, [snapshot]);
 
   const people = getAllCharacters(getActiveAgentSet());
   const busy = snapshot?.agents.filter((a) => STATUS_LABEL[a.s]) ?? [];
