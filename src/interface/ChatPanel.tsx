@@ -12,6 +12,7 @@ import { Avatar } from './components/Avatar';
 import { AuditModal } from './AuditModal';
 import { FileSearch } from 'lucide-react';
 import { BRIEF_TEMPLATES } from '../data/briefTemplates';
+import { MicButton } from './components/MicButton';
 
 const ChatPanel: React.FC = () => {
   const {
@@ -257,6 +258,7 @@ const ChatPanel: React.FC = () => {
               }}
             />
           </div>
+          <MicButton value={input} onChange={setInput} className="h-11 w-11" />
           <button
             onClick={handleSend}
             disabled={!input.trim() || isThinking}

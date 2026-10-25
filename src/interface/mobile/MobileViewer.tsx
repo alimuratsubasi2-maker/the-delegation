@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { decodePayload, NTFY, sendCommand } from '../../core/live/LiveShare';
+import { MicButton } from '../components/MicButton';
 
 /**
  * Phone page (`?takip=<topic>`): follows the desktop office live through ntfy.sh,
@@ -301,6 +302,7 @@ const ChatBar: React.FC<{ topic: string }> = ({ topic }) => {
           placeholder="Örn: Yeni video için konu bulalım"
           className="flex-1 rounded-xl bg-[#121a2f] border border-[#2c3756] px-3 py-2.5 text-sm text-[#e7e9f5] placeholder:text-[#5f6684]"
         />
+        <MicButton value={text} onChange={setText} className="w-11 !rounded-xl !bg-[#18213a]" />
         <button onClick={submit} className="w-11 rounded-xl bg-violet-600 flex items-center justify-center text-white"><Send size={16} /></button>
       </div>
     </div>
