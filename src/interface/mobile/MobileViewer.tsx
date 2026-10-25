@@ -133,7 +133,7 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
       {view === 'ofis' && (
         <div className="fixed inset-x-0 top-[113px] bottom-[96px]">
           <Suspense fallback={<div className="p-6 text-sm text-[#949bb6]">Ofis yükleniyor…</div>}>
-            <MirrorOffice snapshot={snap as any} />
+            <MirrorOffice snapshot={snap as any} onUnsupported={() => setView('durum')} />
           </Suspense>
           {pending.length > 0 && (
             <button onClick={() => setView('durum')} className="absolute top-3 inset-x-4 py-2.5 rounded-xl bg-amber-500 text-black text-xs font-black shadow-lg">

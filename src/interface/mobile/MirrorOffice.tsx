@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getAllCharacters } from '../../data/agents';
 import { useCoreStore } from '../../integration/store/coreStore';
 import { getActiveAgentSet, useTeamStore } from '../../integration/store/teamStore';
@@ -40,16 +40,44 @@ export function applyMirrorSnapshot(snap: MirrorSnapshot) {
   useUiStore.setState({ agentStatuses: Object.fromEntries(snap.agents.map((a) => [a.i, a.s as any])) });
 }
 
-const MirrorOffice: React.FC<{ snapshot: MirrorSnapshot | null }> = ({ snapshot }) => {
+const supports3D = () => {
+  try {
+    return !!(navigator as any).gpu || !!document.createElement('canvas').getContext('webgl2');
+  } catch {
+    return false;
+  }
+};
+
+const MirrorOffice: React.FC<{ snapshot: MirrorSnapshot | null; onUnsupported?: () => void }> = ({ snapshot, onUnsupported }) => {
   const ref = useRef<HTMLDivElement>(null);
   const positions = useUiStore((s) => s.npcScreenPositions);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     setMirrorMode(true);
     if (!ref.current) return;
-    const manager = new SceneManager(ref.current);
-    return () => manager.dispose();
+    if (!supports3D()) {
+      setFailed(true);
+      onUnsupported?.();
+      return;
+    }
+    let manager: SceneManager | null = null;
+    try {
+      manager = new SceneManager(ref.current);
+    } catch (e) {
+      console.error('[Mirror] 3D could not start', e);
+      setFailed(true);
+    }
+    return () => manager?.dispose();
   }, []);
+
+  if (failed) {
+    return (
+      <div className="p-5 m-4 rounded-2xl bg-[#121a2f] border border-[#222c47] text-sm text-[#b4bace] leading-relaxed">
+        Bu tarayıcı 3D ofisi gösteremiyor. <b>Google Chrome</b>'u güncelleyip linki Chrome'da açarsan ofis görünür. Görevler ve onaylar <b>Durum</b> sekmesinde çalışmaya devam eder.
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (snapshot) applyMirrorSnapshot(snapshot);
