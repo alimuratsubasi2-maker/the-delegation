@@ -1,32 +1,38 @@
 import * as THREE from 'three/webgpu';
 
-/** Set after a GPU crash so the next load uses the more forgiving WebGL2 backend. */
-const FORCE_WEBGL_KEY = 'nova-force-webgl';
+/**
+ * Older builds stored this flag to force the WebGL backend after a GPU crash,
+ * but the instanced character system cannot render with `forceWebGL`, leaving
+ * the office blank. Clear it so affected browsers recover.
+ */
+const LEGACY_FORCE_WEBGL_KEY = 'nova-force-webgl';
+/** Recent GPU-recovery reloads, to avoid a reload loop on a broken driver. */
+const RELOADS_KEY = 'nova-gpu-reloads';
+const MAX_RELOADS = 2;
+const RELOAD_WINDOW_MS = 5 * 60 * 1000;
 /** Rendering above this pixel ratio costs a lot of GPU time on laptop screens for little gain. */
 const MAX_PIXEL_RATIO = 1.5;
 
-const readForceWebGL = () => {
-  if (new URLSearchParams(window.location.search).has('gl')) return true;
-  try { return localStorage.getItem(FORCE_WEBGL_KEY) === '1'; } catch { return false; }
-};
+try { localStorage.removeItem(LEGACY_FORCE_WEBGL_KEY); } catch { /* storage unavailable */ }
 
-/** Remembers the GPU failure and reloads once into WebGL mode instead of leaving a dead tab. */
-const fallBackToWebGL = (reason: string) => {
-  console.error('[Engine] GPU failure, switching to WebGL:', reason);
+/** Reloads after a GPU device / context loss, at most MAX_RELOADS times per window. */
+const recoverFromGpuLoss = (reason: string) => {
+  console.error('[Engine] GPU lost:', reason);
   try {
-    if (localStorage.getItem(FORCE_WEBGL_KEY) === '1') return; // already in fallback: avoid reload loops
-    localStorage.setItem(FORCE_WEBGL_KEY, '1');
-  } catch { return; }
-  window.location.reload();
+    const now = Date.now();
+    const recent: number[] = JSON.parse(sessionStorage.getItem(RELOADS_KEY) || '[]').filter((t: number) => now - t < RELOAD_WINDOW_MS);
+    if (recent.length >= MAX_RELOADS) return;
+    sessionStorage.setItem(RELOADS_KEY, JSON.stringify([...recent, now]));
+  } catch { /* storage unavailable: still try once */ }
+  setTimeout(() => window.location.reload(), 1500);
 };
 
 export class Engine {
   public renderer: THREE.WebGPURenderer;
   public timer: THREE.Timer;
-  private readonly forceWebGL = readForceWebGL();
 
   constructor(container: HTMLElement) {
-    this.renderer = new THREE.WebGPURenderer({ antialias: true, forceWebGL: this.forceWebGL });
+    this.renderer = new THREE.WebGPURenderer({ antialias: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
     this.renderer.setSize(container.clientWidth, container.clientHeight, false);
 
@@ -38,10 +44,10 @@ export class Engine {
     // Use default shadow map (PCF) as VSM support in WebGPU/NodeMaterial can be sensitive
     this.renderer.shadowMap.enabled = true;
 
-    // WebGL context loss (driver reset): reload instead of leaving a blank view
+    // WebGL fallback backend (browsers without WebGPU): context loss after a driver reset
     this.renderer.domElement.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      setTimeout(() => window.location.reload(), 1500);
+      recoverFromGpuLoss('webgl context lost');
     });
 
     container.appendChild(this.renderer.domElement);
@@ -53,11 +59,10 @@ export class Engine {
       await this.renderer.init();
       const device = (this.renderer.backend as any)?.device;
       device?.lost?.then((info: { reason: string; message: string }) => {
-        if (info.reason !== 'destroyed') fallBackToWebGL(info.message || 'device lost');
+        if (info.reason !== 'destroyed') recoverFromGpuLoss(info.message || 'device lost');
       });
     } catch (e) {
       console.error("WebGPU initialization failed:", e);
-      if (!this.forceWebGL) fallBackToWebGL(String(e));
     }
   }
 
