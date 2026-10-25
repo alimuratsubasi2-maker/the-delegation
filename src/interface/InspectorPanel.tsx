@@ -128,7 +128,7 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                   </div>
                   <p className="text-[12px] font-bold text-darkDelegation leading-tight mt-1.5">
                     {isLeadAgentIdle
-                      ? "Waiting to review user brief."
+                      ? "Proje özetini seninle konuşmayı bekliyor."
                       : `${agent?.name} needs input.`}
                   </p>
                 </div>
