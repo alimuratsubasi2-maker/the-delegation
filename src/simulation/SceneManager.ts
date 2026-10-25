@@ -69,8 +69,8 @@ export class SceneManager {
     this.setCoreHandler((idx, text) => this.simulation!.handleUserMessage(idx, text));
 
     // Messages typed on the phone tracking page go to the lead agent
-    setLiveChatHandler((text) => {
-      const lead = getActiveAgentSet().leadAgent.index;
+    setLiveChatHandler((text, agent) => {
+      const lead = agent ?? getActiveAgentSet().leadAgent.index;
       useCoreStore.setState((s) => ({
         agentHistories: { ...s.agentHistories, [lead]: [...(s.agentHistories[lead] || []), { role: 'user', content: `📱 ${text}` }] }
       }));

@@ -103,6 +103,7 @@ function buildSnapshot() {
     k: 'state',
     t: Date.now(),
     team: team.teamName,
+    tid: team.id,
     color: team.color,
     phase: core.phase,
     brief: clip(core.userBrief, 600),
@@ -113,7 +114,7 @@ function buildSnapshot() {
       return { i: p.index, n: p.name, c: p.color, s: ui.agentStatuses[p.index] || 'idle', d: clip(task?.title, 60) };
     }),
     tasks: core.tasks.map((t) => ({
-      id: t.id, ti: clip(t.title, 90), s: t.status, a: nameOf(t.assignedAgentId),
+      id: t.id, ti: clip(t.title, 90), s: t.status, a: nameOf(t.assignedAgentId), ai: t.assignedAgentId,
       de: clip(t.description, 160),
       dr: t.status === 'on_hold' ? clip(t.draftOutput || t.output, 700) : undefined,
     })),
@@ -198,16 +199,16 @@ function listenForCommands() {
       const task = core.tasks.find((t) => t.id === cmd.taskId);
       if (cmd.type === 'approve' && task?.status === 'on_hold') core.approveTask(task.id);
       if (cmd.type === 'reject' && task?.status === 'on_hold' && cmd.text) core.rejectTask(task.id, cmd.text);
-      if (cmd.type === 'chat' && cmd.text) chatHandler?.(cmd.text);
+      if (cmd.type === 'chat' && cmd.text) chatHandler?.(cmd.text, typeof cmd.agent === 'number' ? cmd.agent : undefined);
     } catch (e) {
       console.warn('[Live] bad command', e);
     }
   };
 }
 
-let chatHandler: ((text: string) => void) | null = null;
-/** Registered by the simulation: delivers a phone chat message to the lead agent. */
-export function setLiveChatHandler(fn: ((text: string) => void) | null) {
+let chatHandler: ((text: string, agent?: number) => void) | null = null;
+/** Registered by the simulation: delivers a phone chat message to an agent (lead by default). */
+export function setLiveChatHandler(fn: ((text: string, agent?: number) => void) | null) {
   chatHandler = fn;
 }
 
@@ -263,6 +264,6 @@ export function startLiveShare() {
 }
 
 /** Sends a command from the phone viewer to the office. */
-export async function sendCommand(topic: string, cmd: { type: 'approve' | 'reject' | 'chat'; taskId?: string; text?: string }) {
+export async function sendCommand(topic: string, cmd: { type: 'approve' | 'reject' | 'chat'; taskId?: string; text?: string; agent?: number }) {
   await post(`${topic}-cmd`, await encodePayload(cmd));
 }

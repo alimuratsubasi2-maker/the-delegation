@@ -1,9 +1,12 @@
 import { Check, ChevronDown, Copy, MessageSquare, Pencil, Send, Wifi, WifiOff } from 'lucide-react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { decodePayload, NTFY, sendCommand } from '../../core/live/LiveShare';
 import { MicButton } from '../components/MicButton';
+
+// The 3D mirror pulls in three.js, so it loads separately from the light status view
+const MirrorOffice = lazy(() => import('./MirrorOffice'));
 
 /**
  * Phone page (`?takip=<topic>`): follows the desktop office live through ntfy.sh,
@@ -50,6 +53,7 @@ const ago = (ts: number, now: number) => {
 
 const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
   const [snap, setSnap] = useState<Snapshot | null>(null);
+  const [view, setView] = useState<'ofis' | 'durum'>('ofis');
   const [outputs, setOutputs] = useState<Record<string, Output>>({});
   const [live, setLive] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -113,6 +117,33 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
         </span>
       </div>
 
+      {/* Tabs: live 3D office (default) or the status lists */}
+      <div className="sticky top-[61px] z-10 bg-[#0b1122] px-4 pt-2 pb-2 flex gap-2">
+        {(['ofis', 'durum'] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider ${view === v ? 'bg-violet-600 text-white' : 'bg-[#121a2f] text-[#949bb6]'}`}
+          >
+            {v === 'ofis' ? '🏢 Ofis' : `📋 Durum${pending.length ? ` (${pending.length} onay)` : ''}`}
+          </button>
+        ))}
+      </div>
+
+      {view === 'ofis' && (
+        <div className="fixed inset-x-0 top-[113px] bottom-[96px]">
+          <Suspense fallback={<div className="p-6 text-sm text-[#949bb6]">Ofis yükleniyor…</div>}>
+            <MirrorOffice snapshot={snap as any} />
+          </Suspense>
+          {pending.length > 0 && (
+            <button onClick={() => setView('durum')} className="absolute top-3 inset-x-4 py-2.5 rounded-xl bg-amber-500 text-black text-xs font-black shadow-lg">
+              🟣 {pending.length} iş onayını bekliyor — dokun
+            </button>
+          )}
+        </div>
+      )}
+
+      {view === 'durum' && (<>
       {!snap && loaded && (
         <div className="m-4 p-4 rounded-2xl bg-[#121a2f] border border-[#222c47] text-sm text-[#b4bace] leading-relaxed">
           Bilgisayardaki ofiste <b>📱 Telefondan Takip</b> açık olmalı ve ofis sekmesi açık kalmalı. Ekip bir şey yaptığında burada anında görünür.
@@ -187,7 +218,9 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
         </div>
       )}
 
-      <ChatBar topic={topic} />
+      </>)}
+
+      <ChatBar topic={topic} agents={snap?.agents ?? []} />
     </div>
   );
 };
@@ -279,12 +312,13 @@ const PendingTask: React.FC<{ topic: string; task: Snapshot['tasks'][number] }> 
   );
 };
 
-const ChatBar: React.FC<{ topic: string }> = ({ topic }) => {
+const ChatBar: React.FC<{ topic: string; agents: Snapshot['agents'] }> = ({ topic, agents }) => {
   const [text, setText] = useState('');
   const [sent, setSent] = useState(false);
+  const [target, setTarget] = useState<number | ''>('');
   const submit = async () => {
     if (!text.trim()) return;
-    await sendCommand(topic, { type: 'chat', text: text.trim() });
+    await sendCommand(topic, { type: 'chat', text: text.trim(), agent: target === '' ? undefined : target });
     setText('');
     setSent(true);
     setTimeout(() => setSent(false), 2500);
@@ -292,7 +326,15 @@ const ChatBar: React.FC<{ topic: string }> = ({ topic }) => {
   return (
     <div className="fixed bottom-0 inset-x-0 bg-[#0b1122]/95 backdrop-blur border-t border-[#222c47] p-3">
       <div className="text-[10px] text-[#949bb6] mb-1.5 flex items-center gap-1">
-        <MessageSquare size={11} /> {sent ? 'Lider ajana iletildi ✓' : 'Lider ajana mesaj (projeyi buradan da başlatabilirsin)'}
+        <MessageSquare size={11} /> {sent ? 'İletildi ✓' : 'Mesaj gönder:'}
+        <select
+          value={target}
+          onChange={(e) => setTarget(e.target.value === '' ? '' : Number(e.target.value))}
+          className="ml-1 bg-[#121a2f] border border-[#2c3756] rounded-lg px-1.5 py-0.5 text-[10px] text-[#e7e9f5]"
+        >
+          <option value="">Lider ajan</option>
+          {agents.map((a) => <option key={a.i} value={a.i}>{a.n}</option>)}
+        </select>
       </div>
       <div className="flex gap-2">
         <input

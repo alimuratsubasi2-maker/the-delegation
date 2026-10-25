@@ -19,19 +19,16 @@ export function useChatAvailability(agentIndex: number | null): ChatAvailability
 
   if (agentIndex === null) return { canChat: false, reason: '' }
   if (isGeneratingAsset) return { canChat: false, reason: 'Teslim ediliyor...' }
-  if (phase === 'done') return { canChat: false, reason: 'Proje tamamlandı' }
 
   const isLead = agentIndex === system.leadAgent.index
   // The Obsidian brain answers questions about past projects at any time it is not busy
   const isBrain = !!getAllAgents(system).find((a) => a.index === agentIndex)?.id.startsWith('obsidian')
 
-  // 1. Idle Phase: Only Lead Agent can chat (to set the brief)
-  if (phase === 'idle') {
-    return isLead || isBrain ? { canChat: true, reason: '' } : { canChat: false, reason: 'Proje özeti bekleniyor' }
-  }
+  // Before a project starts and after delivery, every agent can be talked to one-on-one
+  if (phase === 'idle' || phase === 'done') return { canChat: true, reason: '' }
 
-  // 2. Working Phase: Lead Agent can always talk. Others only when idle.
-  if (isLead || agentStatus === 'idle') {
+  // Working phase: lead and brain always; others whenever they are not busy with a task
+  if (isLead || isBrain || agentStatus === 'idle' || !agentStatus) {
     return { canChat: true, reason: '' }
   }
 

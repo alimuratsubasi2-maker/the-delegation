@@ -15,6 +15,7 @@ import SimulationView from './interface/SimulationView';
 import { VisualConfigurator } from './interface/VisualConfigurator/VisualConfigurator';
 import { SceneContext } from './simulation/SceneContext';
 import { SceneManager } from './simulation/SceneManager';
+import { useIsMobile } from './integration/hooks/useIsMobile';
 
 
 const App: React.FC = () => {
@@ -24,6 +25,8 @@ const App: React.FC = () => {
   const { isLogOpen, isKanbanOpen, setIsResizing, viewMode, setViewMode } = useCoreStore();
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // Phones show only the 3D office; agent details open as a sheet over it
+  const isMobile = useIsMobile();
   const [kanbanHeight, setKanbanHeight] = useState(220);
 
   const startResizing = useCallback(() => {
@@ -79,7 +82,7 @@ const App: React.FC = () => {
 
         <div className="flex-1 flex flex-row min-h-0 min-w-0 overflow-hidden">
           {/* Left: Log panel */}
-          {isLogOpen && !isFullscreen && viewMode !== 'design' && <ActionLogPanel />}
+          {isLogOpen && !isFullscreen && !isMobile && viewMode !== 'design' && <ActionLogPanel />}
 
           {/* Center: canvas + kanban drawer stacked */}
           <div className="relative flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden bg-zinc-50">
@@ -89,10 +92,10 @@ const App: React.FC = () => {
               className="flex-1 flex flex-col min-w-0 min-h-0"
               style={{ visibility: viewMode === 'design' ? 'hidden' : 'visible' }}
             >
-              <SimulationView canvasRef={canvasRef} isFullscreen={isFullscreen} setIsFullscreen={setIsFullscreen} />
+              <SimulationView canvasRef={canvasRef} isFullscreen={isFullscreen} isMobile={isMobile} setIsFullscreen={setIsFullscreen} />
 
               {/* Resize Bar */}
-              {isKanbanOpen && !isFullscreen && (
+              {isKanbanOpen && !isFullscreen && !isMobile && (
                 <div
                   className={`h-2 hover:h-2 bg-transparent hover:bg-zinc-200 border-t border-black/5 transition-colors cursor-row-resize z-30 flex items-center justify-center group shrink-0 ${useCoreStore.getState().isResizing ? 'bg-zinc-300' : ''}`}
                   onMouseDown={startResizing}
@@ -101,12 +104,12 @@ const App: React.FC = () => {
                 </div>
               )}
 
-              {isKanbanOpen && !isFullscreen && <KanbanPanel height={kanbanHeight} />}
+              {isKanbanOpen && !isFullscreen && !isMobile && <KanbanPanel height={kanbanHeight} />}
             </div>
           </div>
 
           {/* Right: Inspector sidebar */}
-          {!isFullscreen && viewMode !== 'design' && <InspectorPanel />}
+          {!isFullscreen && !isMobile && viewMode !== 'design' && <InspectorPanel />}
         </div>
 
         {/* Design Mode Overlay (Modal) */}

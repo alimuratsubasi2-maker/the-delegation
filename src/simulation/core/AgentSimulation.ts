@@ -5,6 +5,13 @@ import { useUiStore } from '../../integration/store/uiStore';
 import { backgroundInterval } from '../../core/util/backgroundInterval';
 
 /**
+ * Mirror mode: the phone shows a live copy of the desktop office. State arrives
+ * from the desktop, so agents here must never think or start tasks themselves.
+ */
+let mirrorMode = false;
+export const setMirrorMode = (on: boolean) => { mirrorMode = on; };
+
+/**
  * AgentSimulation — Autonomous Service Layer.
  * 
  * DESIGN PRINCIPLE: State-Driven Orchestration.
@@ -68,6 +75,7 @@ export class AgentSimulation {
 
   /** Central method to check for and start available tasks. */
   public processScheduledTasks() {
+    if (mirrorMode) return;
     const state = useCoreStore.getState();
     if (state.phase !== 'working') return;
 
@@ -84,6 +92,7 @@ export class AgentSimulation {
   }
 
   private async triggerAutonomousStrategy() {
+    if (mirrorMode) return;
     const lead = this.getAgent(1);
     const ui = useUiStore.getState();
     const core = useCoreStore.getState();
@@ -130,6 +139,7 @@ export class AgentSimulation {
   }
 
   private async checkProjectCompletion() {
+    if (mirrorMode) return;
     const state = useCoreStore.getState();
     const allTasksFinished = state.tasks.length > 0 && state.tasks.every(t => t.status === 'done');
     
@@ -159,6 +169,7 @@ export class AgentSimulation {
 
 
   public async handleUserMessage(agentIndex: number, text: string) {
+    if (mirrorMode) return null;
     const agent = this.getAgent(agentIndex);
     if (!agent || !agent.canChat()) return null;
     const response = await agent.think(text, { isChat: true });

@@ -13,10 +13,11 @@ export class PromptBuilder {
       .map((a: any) => `[${a.data.index}] ${a.data.name}`)
       .join(', ');
 
+    const oneOnOne = 'Talk one-on-one with [0]: answer questions and give concrete advice from your own specialty. If [0] wants a full project, tell them to brief the Lead.';
     const objectives = {
-      idle: isLead ? 'Chat with [0] to define brief, then set_user_brief.' : isBrain ? 'Answer [0] about their projects, rules and past work using OBSIDIAN BRAIN. Cite note names.' : 'Wait for Lead to start.',
+      idle: isLead ? 'Chat with [0] to define brief, then set_user_brief.' : isBrain ? 'Answer [0] about their projects, rules and past work using OBSIDIAN BRAIN. Cite note names.' : oneOnOne,
       working: isLead ? 'Manage board. deliver_project when all Done.' : 'Complete tasks.',
-      done: 'Project finished.'
+      done: isLead ? 'Project delivered. Discuss the results with [0].' : oneOnOne
     };
 
     const tasks = useCoreStore.getState().tasks;
@@ -73,7 +74,7 @@ Team: User (0), ${team}
 KANBAN:
 ${board}
 RULES:
-1. MAX ${isBrain ? 150 : 30} WORDS for chat. Task titles/descriptions you create MUST be under 60 WORDS. 'complete_task' outputs: deliver the COMPLETE work product (full script, full email, full proposal, full plan) — up to 900 WORDS, never a summary of it. 'deliver_project': compile every approved output into one finished, ready-to-use document — up to 2500 WORDS. NO conversational filler, intros, outros, or self-attribution ("I have done..."). Focus exclusively on core data and synthesis.
+1. MAX ${isBrain ? 150 : isLead ? 40 : 90} WORDS for chat. Task titles/descriptions you create MUST be under 60 WORDS. 'complete_task' outputs: deliver the COMPLETE work product (full script, full email, full proposal, full plan) — up to 900 WORDS, never a summary of it. 'deliver_project': compile every approved output into one finished, ready-to-use document — up to 2500 WORDS. NO conversational filler, intros, outros, or self-attribution ("I have done..."). Focus exclusively on core data and synthesis.
 2. Tools only in WORKING (except set_user_brief in IDLE).
 3. QUALITY: If your node has 'Human-in-the-loop' enabled, your 'complete_task' result will be reviewed by the user before completion. 
 4. NO META-TALK: Avoid "I have finished X", "Here is the result". Use the tool payload for content and Chat for conversation only.${outputInstruction}${imageInstruction}
