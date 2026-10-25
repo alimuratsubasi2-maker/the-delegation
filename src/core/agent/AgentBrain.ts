@@ -251,7 +251,7 @@ export class AgentBrain {
 
       core.addLogEntry({
         agentIndex: -1,
-        action: `Generating final ${activeTeam.outputType} using ${model}...`,
+        action: `son çıktıyı üretiyor (${model})...`,
         taskId: undefined
       });
 
@@ -305,7 +305,7 @@ export class AgentBrain {
       useUiStore.getState().setBYOKOpen(true, errMsg);
       core.addLogEntry({
         agentIndex: 0,
-        action: `Error generating final ${activeTeam.outputType}: ${errMsg}`,
+        action: `son çıktı üretilemedi: ${errMsg}`,
         taskId: undefined
       });
     }

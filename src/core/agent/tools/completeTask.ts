@@ -26,7 +26,7 @@ export function completeTask(agent: AgentActionContext, args: { taskId: string, 
 
   store.updateTaskStatus(taskId, 'done');
   store.setTaskOutput(taskId, output);
-  store.addLogEntry({ agentIndex: agent.data.index, action: `completed task`, taskId });
+  store.addLogEntry({ agentIndex: agent.data.index, action: `görevi tamamladı`, taskId });
   
   return true;
 }

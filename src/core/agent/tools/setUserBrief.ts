@@ -14,7 +14,7 @@ export function setUserBrief(agent: AgentActionContext, args: { brief: string })
   if (store.phase !== 'idle') return false;
 
   store.startProject(brief);
-  store.addLogEntry({ agentIndex: agent.data.index, action: 'defined project brief', taskId: undefined });
+  store.addLogEntry({ agentIndex: agent.data.index, action: 'proje özetini belirledi', taskId: undefined });
   
   return true;
 }

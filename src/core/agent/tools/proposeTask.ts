@@ -16,7 +16,7 @@ export function proposeTask(agent: AgentActionContext, args: { title: string, de
     requiresUserApproval: requiresApproval || false
   });
 
-  store.addLogEntry({ agentIndex: agent.data.index, action: `proposed task: "${title}"`, taskId: newTask.id });
+  store.addLogEntry({ agentIndex: agent.data.index, action: `görev verdi: "${title}"`, taskId: newTask.id });
   
   return true;
 }

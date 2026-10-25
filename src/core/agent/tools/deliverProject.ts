@@ -39,7 +39,7 @@ export function deliverProject(agent: AgentActionContext, args: { output: string
   store.tasks.filter(t => t.assignedAgentId === agent.data.index && t.status === 'in_progress')
     .forEach(t => store.updateTaskStatus(t.id, 'done'));
     
-  store.addLogEntry({ agentIndex: agent.data.index, action: 'delivered final project results', taskId: undefined });
+  store.addLogEntry({ agentIndex: agent.data.index, action: 'projeyi teslim etti', taskId: undefined });
   
   return true;
 }

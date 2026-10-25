@@ -189,7 +189,7 @@ export function FinalOutputModal() {
                     {(activeTeam?.outputType || finalAssetType).toUpperCase()}
                   </span>
                 )}
-                Final {finalAssetType} Deliverable
+                Son Teslim
               </h2>
               <p className="text-[11px] text-zinc-400 mt-0.5">
                 Ekibin tarafından hazırlandı

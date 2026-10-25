@@ -2,6 +2,7 @@ import { AgentNode, AgenticSystem, getAllAgents } from '../../data/agents';
 import { useCoreStore } from '../../integration/store/coreStore';
 import { AgentHost } from './AgentHost';
 import { useUiStore } from '../../integration/store/uiStore';
+import { backgroundInterval } from '../../core/util/backgroundInterval';
 
 /**
  * AgentSimulation — Autonomous Service Layer.
@@ -15,7 +16,7 @@ export class AgentSimulation {
   private agents: Map<number, AgentHost> = new Map();
   private system: AgenticSystem;
   private unsubs: (() => void)[] = [];
-  private heartbeatInterval: any = null;
+  private stopHeartbeat: (() => void) | null = null;
   private lastSparkTriggerTime: number = 0;
 
   constructor(system: AgenticSystem) {
@@ -26,7 +27,8 @@ export class AgentSimulation {
 
   private startStateMonitoring() {
     // 1. Heartbeat safety net (Periodically check for scheduled tasks and empty boards)
-    this.heartbeatInterval = setInterval(() => {
+    // Worker-driven so the office keeps working while the tab is in the background
+    this.stopHeartbeat = backgroundInterval(() => {
       const state = useCoreStore.getState();
       if (state.phase === 'working' && state.tasks.length === 0) {
         this.triggerAutonomousStrategy();
@@ -164,7 +166,7 @@ export class AgentSimulation {
   }
 
   public dispose() {
-    if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
+    this.stopHeartbeat?.();
     this.unsubs.forEach(unsub => unsub());
     this.unsubs = [];
     this.agents.forEach(a => a.dispose());
