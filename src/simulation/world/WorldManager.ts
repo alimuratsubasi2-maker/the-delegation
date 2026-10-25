@@ -23,6 +23,8 @@ const WARM_LAMP = 0xffb347;
 const BRAIN_POSITION = new THREE.Vector3(WING_OFFSET_X / 2, 0, 0);
 const BRAIN_HOVER = 2.5;
 export const BRAIN_POI_ID = 'brain-core';
+/** Where the user's own character appears (centre of the office, beside the crystal). */
+export const PLAYER_SPAWN = new THREE.Vector3(WING_OFFSET_X / 2 - 1.2, 0, 1.0);
 
 type NeonStyle = { color: THREE.ColorRepresentation; roughness: number; metalness: number; emissive?: THREE.ColorRepresentation; emissiveIntensity?: number };
 

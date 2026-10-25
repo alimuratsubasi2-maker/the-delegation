@@ -15,6 +15,7 @@ import { AgentStateBuffer } from '../behavior/AgentStateBuffer';
 import { ExpressionBuffer } from '../behavior/ExpressionBuffer';
 import { DRACO_LIB_PATH } from '../constants';
 import { PoiManager } from '../world/PoiManager';
+import { PLAYER_SPAWN } from '../world/WorldManager';
 
 export class CharacterManager {
   private instanceCount = getAllAgents(getActiveAgentSet()).length + 1;
@@ -227,9 +228,9 @@ export class CharacterManager {
       tempColor.set(colorOverride);
 
       if (i === system.user.index) {
-        // Player spawns at (0,0,0)
-        posArray[i * 4 + 0] = 0;
-        posArray[i * 4 + 2] = 0;
+        // Player spawns in the hall between both rooms, next to the Obsidian crystal
+        posArray[i * 4 + 0] = PLAYER_SPAWN.x;
+        posArray[i * 4 + 2] = PLAYER_SPAWN.z;
         agentsBuffer[i] = null;
       } else {
         const poi = spawnPois[spawnIndex % spawnPois.length];

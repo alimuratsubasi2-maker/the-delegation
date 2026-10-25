@@ -8,6 +8,7 @@ import { CharacterManager } from './entities/CharacterManager';
 import { NavMeshManager } from './pathfinding/NavMeshManager';
 import { PathAgent } from './pathfinding/PathAgent';
 import { PoiManager } from './world/PoiManager';
+import { PLAYER_SPAWN } from './world/WorldManager';
 
 /**
  * CharacterController — unified API for controlling any character (player or NPC).
@@ -267,7 +268,7 @@ export class CharacterController implements ICharacterDriver {
     npcIndices.forEach(i => this.cancelMovement(i));
 
     // 3. Teleport player to world origin
-    this.characterManager.setPosition(playerIndex, new THREE.Vector3(0, 0, 0));
+    this.characterManager.setPosition(playerIndex, PLAYER_SPAWN.clone());
     this.play(playerIndex, 'idle');
 
     // 4. Reassign spawn POIs in sorted order (same as initInstances)
