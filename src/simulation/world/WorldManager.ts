@@ -29,7 +29,7 @@ type NeonStyle = { color: THREE.ColorRepresentation; roughness: number; metalnes
 /** Night office: navy floor, dark wood desks, warm desk lamps, violet ambience. */
 function neonStyleFor(name: string): NeonStyle {
   if (name.startsWith('colored')) return { color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.9, roughness: 0.5, metalness: 0 };
-  if (name.includes('floor')) return { color: 0x141c33, roughness: 0.55, metalness: 0.25 };
+  if (name.includes('floor')) return { color: 0x1d2847, roughness: 0.55, metalness: 0.25 };
   if (name.includes('pc') || name.includes('laptop')) return { color: 0x12141c, emissive: 0x6366f1, emissiveIntensity: 0.45, roughness: 0.3, metalness: 0.5 };
   if (name.includes('flexo')) return { color: 0x2b2b2b, emissive: WARM_LAMP, emissiveIntensity: 1.8, roughness: 0.5, metalness: 0.3 };
   if (name.includes('board')) return { color: 0x1c2338, emissive: 0x4c1d95, emissiveIntensity: 0.25, roughness: 0.4, metalness: 0.3 };

@@ -19,7 +19,7 @@ export class Stage {
     this.scene.background = new THREE.Color(SCENE_BACKGROUND_COLOR);
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 500);
-    this.camera.position.set(OFFICE_CENTER_X + 12, 11, 19);
+    this.camera.position.set(OFFICE_CENTER_X + 8, 8.5, 13);
 
     this.controls = new OrbitControls(this.camera, rendererElement);
     this.controls.enableDamping = true;
@@ -47,7 +47,7 @@ export class Stage {
 
   private setupLights() {
     // Keep ambient low so directional shadows have visible contrast
-    const ambientLight = new THREE.AmbientLight(0x8090c8, 0.6 * Math.PI);
+    const ambientLight = new THREE.AmbientLight(0x8a9ad6, 0.8 * Math.PI);
     this.scene.add(ambientLight);
 
     const dirLight = new THREE.DirectionalLight(0xb4c0ff, 0.45 * Math.PI);
