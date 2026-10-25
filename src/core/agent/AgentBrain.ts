@@ -41,7 +41,7 @@ export class AgentBrain {
       const llmConfig = useUiStore.getState().llmConfig;
       if (!llmConfig.apiKey) throw new Error('Gemini API key is required');
       const provider = new GeminiProvider(llmConfig.apiKey);
-      const model = this.host.data.model || llmConfig.model;
+      const model = llmConfig.forceModel || this.host.data.model || llmConfig.model;
       const teamId = useTeamStore.getState().selectedAgentSetId;
       const activeTeam = useTeamStore.getState().customSystems.find(s => s.id === teamId)
         || AGENTIC_SETS.find(s => s.id === teamId);

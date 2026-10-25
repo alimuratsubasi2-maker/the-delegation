@@ -34,6 +34,8 @@ export interface LLMConfig {
   apiKey?: string;
   baseUrl?: string;
   model: string;
+  /** Overrides every agent's model when set (e.g. flash-lite on the free tier). */
+  forceModel?: string;
 }
 
 export interface LLMRequestDetails {

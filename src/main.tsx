@@ -17,7 +17,7 @@ if (trackingTopic) {
     root.render(<MobileViewer topic={trackingTopic} />);
   });
 } else {
-  Promise.all([import('./App'), import('./core/live/LiveShare')]).then(([{ default: App }, { startLiveShare }]) => {
+  Promise.all([import('./App'), import('./core/live/LiveShare'), import('./core/archive/ProjectArchive')]).then(([{ default: App }, { startLiveShare }]) => {
     startLiveShare();
     root.render(<App />);
   });

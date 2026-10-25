@@ -93,6 +93,7 @@ export class WorldManager {
     });
 
     this.addNeonDecor();
+    this.addSigns();
 
     // Extract Points of Interest
     this.poiManager.loadFromGlb(this.office);
@@ -142,6 +143,45 @@ export class WorldManager {
       const fill = new THREE.PointLight(0x7c3aed, 3, 12, 1.2);
       fill.position.set(x, 3.2, 0);
       this.office.add(fill);
+    }
+  }
+
+  /** Glowing billboard text (always faces the camera). */
+  private makeSign(text: string, color: string, height: number): THREE.Sprite {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 192;
+    const ctx = canvas.getContext('2d')!;
+    ctx.font = '900 120px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 28;
+    ctx.fillStyle = color;
+    ctx.fillText(text, 512, 100);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#ffffff';
+    ctx.globalAlpha = 0.85;
+    ctx.fillText(text, 512, 100);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    const sprite = new THREE.Sprite(new THREE.SpriteNodeMaterial({ map: texture, transparent: true, depthWrite: false }));
+    sprite.scale.set(height * (canvas.width / canvas.height), height, 1);
+    return sprite;
+  }
+
+  private addSigns(): void {
+    if (!this.office) return;
+    const signs: [string, string, number, THREE.Vector3][] = [
+      ['NOVA DİJİTAL', '#a855f7', 0.9, new THREE.Vector3(0, 3.4, -4.6)],
+      ['STÜDYO', '#818cf8', 0.9, new THREE.Vector3(WING_OFFSET_X, 3.4, 4.6)],
+      ['OBSIDIAN · BEYİN', '#c084fc', 0.32, BRAIN_POSITION.clone().add(new THREE.Vector3(0, BRAIN_HOVER - 0.95, 0))],
+    ];
+    for (const [text, color, h, pos] of signs) {
+      const sign = this.makeSign(text, color, h);
+      sign.position.copy(pos);
+      this.office.add(sign);
     }
   }
 

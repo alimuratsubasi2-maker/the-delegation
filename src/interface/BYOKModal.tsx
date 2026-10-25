@@ -1,7 +1,7 @@
 import { Eye, EyeOff, Trash2, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useUiStore } from '../integration/store/uiStore';
-import { DEFAULT_MODELS } from '../core/llm/constants';
+import { AVAILABLE_MODELS, DEFAULT_MODELS } from '../core/llm/constants';
 
 interface BYOKModalProps {
   onClose: () => void;
@@ -15,11 +15,13 @@ const BYOKModal: React.FC<BYOKModalProps> = ({ onClose }) => {
   const [apiKey, setApiKey] = useState<string>(llmConfig.apiKey || '');
   const [showKey, setShowKey] = useState(false);
   const [isErrorExpanded, setIsErrorExpanded] = useState(false);
+  const [forceModel, setForceModel] = useState<string>(llmConfig.forceModel || '');
 
   const handleSave = () => {
     const config = {
       apiKey: apiKey.trim(),
       model: llmConfig.model || DEFAULT_MODELS.text,
+      forceModel: forceModel || undefined,
     };
     setLlmConfig(config);
     try {
@@ -107,7 +109,7 @@ const BYOKModal: React.FC<BYOKModalProps> = ({ onClose }) => {
                         onClick={() => setIsErrorExpanded(!isErrorExpanded)}
                         className="mt-1 text-[9px] font-black uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors cursor-pointer"
                       >
-                        {isErrorExpanded ? 'Show Less' : 'Show More'}
+                        {isErrorExpanded ? 'Daha az' : 'Devamı'}
                       </button>
                     )}
                   </div>
@@ -138,6 +140,24 @@ const BYOKModal: React.FC<BYOKModalProps> = ({ onClose }) => {
                 {showKey ? <EyeOff size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
               </button>
             </div>
+          </div>
+
+          {/* One switch for every agent's model (free-tier quota rescue) */}
+          <div className="mb-8 -mt-4">
+            <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-zinc-300 mb-3 ml-1">
+              Tüm ajanların modeli
+            </label>
+            <select
+              value={forceModel}
+              onChange={(e) => setForceModel(e.target.value)}
+              className="w-full bg-zinc-50 border border-zinc-100 rounded-3xl px-6 py-3.5 text-sm text-darkDelegation font-mono focus:outline-none"
+            >
+              <option value="">Ekip ayarı (varsayılan)</option>
+              {AVAILABLE_MODELS.text.map((m) => (
+                <option key={m} value={m}>{m}{m.includes('lite') ? ' — hızlı, ücretsiz kota dostu' : m.includes('pro') ? ' — en akıllı, yavaş' : ''}</option>
+              ))}
+            </select>
+            <p className="text-[11px] text-zinc-400 mt-2 ml-1 leading-relaxed">Ücretsiz anahtarda "kota" hatası alırsan <b>flash-lite</b> seç.</p>
           </div>
 
           {/* Actions */}

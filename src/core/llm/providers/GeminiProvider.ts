@@ -3,6 +3,53 @@ import { LLMMessage, LLMProvider, LLMResponse, LLMToolCall, LLMToolDefinition } 
 import { DEFAULT_MODELS } from '../constants';
 import { calculateTokensForCost } from '../pricing';
 
+// ── Free-tier friendliness ───────────────────────────────────
+// Many agents think at once; keep at most MAX_CONCURRENT requests in flight
+// and retry rate-limit / overload errors with backoff instead of failing.
+const MAX_CONCURRENT = 2;
+const MAX_RETRIES = 5;
+let inFlight = 0;
+const waiters: (() => void)[] = [];
+
+async function acquireSlot(): Promise<void> {
+  if (inFlight < MAX_CONCURRENT) { inFlight++; return; }
+  await new Promise<void>((resolve) => waiters.push(resolve));
+  inFlight++;
+}
+
+function releaseSlot(): void {
+  inFlight--;
+  waiters.shift()?.();
+}
+
+const isRetryable = (e: any) => /429|RESOURCE_EXHAUSTED|503|UNAVAILABLE|overloaded|500|INTERNAL/i.test(String(e?.message ?? e));
+
+/** Server-suggested delay ("retryDelay": "12s") or exponential backoff. */
+function retryDelayMs(e: any, attempt: number): number {
+  const m = String(e?.message ?? '').match(/retryDelay"?\s*:\s*"?(\d+(?:\.\d+)?)s/);
+  if (m) return Math.min(60000, Number(m[1]) * 1000 + 500);
+  return Math.min(60000, 4000 * 2 ** attempt);
+}
+
+export async function withRateLimit<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    await acquireSlot();
+    let error: unknown;
+    try {
+      return await fn();
+    } catch (e) {
+      error = e;
+    } finally {
+      // The slot is freed before any backoff wait so other agents can proceed
+      releaseSlot();
+    }
+    if (attempt >= MAX_RETRIES || !isRetryable(error)) throw error;
+    const wait = retryDelayMs(error, attempt);
+    console.warn(`[Gemini] Rate limited, retrying in ${Math.round(wait / 1000)}s (attempt ${attempt + 1}/${MAX_RETRIES})`);
+    await new Promise((r) => setTimeout(r, wait));
+  }
+}
+
 
 export class GeminiProvider implements LLMProvider {
   private client: GoogleGenAI;
@@ -31,14 +78,14 @@ export class GeminiProvider implements LLMProvider {
     console.log("contents--------", contents);
     console.log("systemInstruction--------", systemInstruction);
     console.log("tools--------", tools);
-    const result = await this.client.models.generateContent({
+    const result = await withRateLimit(() => this.client.models.generateContent({
       model: modelName,
       contents,
       config: {
         systemInstruction: systemInstruction,
         tools: systemTools,
       }
-    });
+    }));
     console.log("received from Gemini")
     console.log("result--------", result);
     const candidate = result.candidates?.[0];

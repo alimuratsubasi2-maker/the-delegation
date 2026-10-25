@@ -1,4 +1,4 @@
-import { Brain, Info, KeyRound, Maximize2, Settings, Smartphone } from 'lucide-react';
+import { Brain, History, Info, KeyRound, Maximize2, Settings, Smartphone } from 'lucide-react';
 import React, { useState } from 'react';
 import packageJson from '../../package.json';
 import { useCoreStore } from '../integration/store/coreStore';
@@ -7,6 +7,8 @@ import BYOKModal from './BYOKModal';
 import InfoModal from './InfoModal';
 import ObsidianModal from './ObsidianModal';
 import LiveShareModal from './LiveShareModal';
+import ArchiveModal from './ArchiveModal';
+import { useArchiveStore } from '../core/archive/ProjectArchive';
 import { useLiveStore } from '../core/live/LiveShare';
 import { useObsidianStore } from '../core/obsidian/ObsidianBrain';
 
@@ -20,6 +22,8 @@ const Header: React.FC = () => {
   const obsidianStatus = useObsidianStore((s) => s.status);
   const [isLiveOpen, setIsLiveOpen] = useState(false);
   const liveEnabled = useLiveStore((s) => s.enabled);
+  const [isArchiveOpen, setIsArchiveOpen] = useState(false);
+  const archiveCount = useArchiveStore((s) => s.items.length);
   const hasKey = !!llmConfig.apiKey;
 
   const handleFullscreen = () => {
@@ -98,6 +102,16 @@ const Header: React.FC = () => {
             <Maximize2 size={16} />
           </button>
           <button
+            onClick={() => setIsArchiveOpen(true)}
+            className="relative text-zinc-400 hover:text-violet-600 transition-colors p-1"
+            title="Geçmiş Projeler"
+          >
+            <History size={16} />
+            {archiveCount > 0 && (
+              <span className="absolute -top-1 -right-1.5 min-w-[14px] h-[14px] px-0.5 rounded-full bg-violet-600 text-white text-[8px] font-black flex items-center justify-center">{archiveCount}</span>
+            )}
+          </button>
+          <button
             onClick={() => setIsLiveOpen(true)}
             className="relative text-zinc-400 hover:text-violet-600 transition-colors p-1"
             title="Telefondan Takip"
@@ -132,6 +146,10 @@ const Header: React.FC = () => {
 
       {isInfoOpen && (
         <InfoModal key="info-modal" onClose={() => setIsInfoOpen(false)} />
+      )}
+
+      {isArchiveOpen && (
+        <ArchiveModal key="archive-modal" onClose={() => setIsArchiveOpen(false)} />
       )}
 
       {isLiveOpen && (
