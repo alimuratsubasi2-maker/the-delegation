@@ -26,7 +26,7 @@ const ResetModal: React.FC<ResetModalProps> = ({ isOpen, onClose, onConfirm }) =
                 <AlertTriangle size={32} strokeWidth={2.5} />
               </div>
               <h3 className="text-2xl font-black text-darkDelegation leading-tight">
-                Start New Project?
+                Yeni proje başlatılsın mı?
               </h3>
             </div>
             <button
@@ -51,13 +51,13 @@ const ResetModal: React.FC<ResetModalProps> = ({ isOpen, onClose, onConfirm }) =
               className="w-full py-4 bg-darkDelegation hover:bg-darkDelegation text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
               <RefreshCcw size={14} />
-              Yes, Reset Everything
+              Evet, Her Şeyi Sıfırla
             </button>
             <button
               onClick={onClose}
               className="w-full py-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98]"
             >
-              Cancel
+              Vazgeç
             </button>
           </div>
         </div>

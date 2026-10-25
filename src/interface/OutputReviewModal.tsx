@@ -73,7 +73,7 @@ export function OutputReviewModal() {
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
-          <Maximize size={12} /> Aspect Ratio
+          <Maximize size={12} /> En-Boy Oranı
           <InfoBubble text="The horizontal or vertical proportions of the generated asset." />
         </label>
         <select
@@ -90,7 +90,7 @@ export function OutputReviewModal() {
       </div>
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
-          <Settings2 size={12} /> Image Size
+          <Settings2 size={12} /> Görsel Boyutu
           <InfoBubble text="Target dimensions for the final image. Higher sizes offer more detail but may take longer." />
         </label>
         <select
@@ -112,7 +112,7 @@ export function OutputReviewModal() {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
-            <Monitor size={12} /> Resolution
+            <Monitor size={12} /> Çözünürlük
             <InfoBubble text="Video output quality. Higher resolutions increase visual fidelity and processing requirements." />
           </label>
           <select
@@ -127,7 +127,7 @@ export function OutputReviewModal() {
         </div>
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
-            <Clock size={12} /> Duration
+            <Clock size={12} /> Süre
             <InfoBubble text="Total runtime of the generated video clip." />
           </label>
           <select
@@ -151,7 +151,7 @@ export function OutputReviewModal() {
     return (
       <div className="space-y-2">
         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
-          <Sparkles size={12} /> Generation Model
+          <Sparkles size={12} /> Üretim Modeli
           <InfoBubble text="Select the specific Gemini model used for the final generation. Flash models are faster, Pro models are more capable." />
         </label>
         <select
@@ -191,10 +191,10 @@ export function OutputReviewModal() {
             </div>
             <div>
               <h2 className="text-sm font-black uppercase tracking-widest text-darkDelegation flex items-center gap-2">
-                Review & Optimize Output
+                Çıktıyı İncele ve İyileştir
               </h2>
               <p className="text-[11px] text-zinc-400 mt-0.5">
-                The lead agent has synthesized the team's work. Fine-tune it before final generation.
+                Lider ajan ekibin işini birleştirdi. Son üretimden önce düzenleyebilirsin.
               </p>
             </div>
           </div>
@@ -212,17 +212,17 @@ export function OutputReviewModal() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-                PROMPT / CONTENT
+                PROMPT / İÇERİK
               </label>
               <div className="px-2 py-0.5 bg-zinc-100 rounded text-[9px] font-bold text-zinc-400 tracking-tighter">
-                EDITABLE
+                DÜZENLENEBİLİR
               </div>
             </div>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="w-full h-40 bg-white border border-zinc-200 rounded-2xl p-4 text-sm text-zinc-700 leading-relaxed font-sans focus:ring-2 focus:ring-darkDelegation outline-none resize-none shadow-sm"
-              placeholder="Enter the final generation prompt..."
+              placeholder="Son üretim promptunu yaz..."
             />
           </div>
 
@@ -235,20 +235,20 @@ export function OutputReviewModal() {
             </div>
 
             <div className="bg-darkDelegation rounded-[24px] p-6 text-white space-y-4 shadow-xl">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">System Information</h3>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Sistem Bilgisi</h3>
               <div className="space-y-4">
                 <div>
-                  <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">Team</p>
+                  <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">Ekip</p>
                   <p className="text-xs font-black">{activeTeam.teamName}</p>
                 </div>
                 <div>
-                  <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">Output Type</p>
+                  <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">Çıktı Türü</p>
                   <p className="text-xs font-black capitalize">{activeTeam.outputType}</p>
                 </div>
 
                 {referenceImages.length > 0 && (
                   <div className="pt-6 border-t border-white/10 space-y-3">
-                    <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">Visual Inspiration</p>
+                    <p className="text-[9px] text-zinc-500 uppercase font-bold tracking-widest">Görsel İlham</p>
                     <div className="grid grid-cols-3 gap-2">
                       {referenceImages.map((img, idx) => (
                         <div key={idx} className="aspect-square rounded-lg overflow-hidden border border-white/5 bg-white/5">
@@ -275,7 +275,7 @@ export function OutputReviewModal() {
             onClick={handleCancelAndReset}
             className="px-6 py-3 bg-white border border-zinc-200 text-zinc-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-zinc-50 hover:text-red-500 hover:border-red-500 transition-all active:scale-[0.98]"
           >
-            Cancel & Reset Project
+            Vazgeç ve Projeyi Sıfırla
           </button>
 
           <button
@@ -283,7 +283,7 @@ export function OutputReviewModal() {
             className="px-8 py-3 bg-darkDelegation text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-black active:scale-[0.98] transition-all shadow-lg shadow-black/10 flex items-center gap-2"
           >
             <Check size={14} strokeWidth={3} />
-            Approve & Generate
+            Onayla ve Üret
           </button>
         </div>
       </div>
@@ -305,9 +305,9 @@ export function OutputReviewModal() {
               <AlertCircle size={32} />
             </div>
             <div>
-              <h3 className="text-sm font-black uppercase tracking-widest text-darkDelegation">Are you absolutely sure?</h3>
+              <h3 className="text-sm font-black uppercase tracking-widest text-darkDelegation">Emin misin?</h3>
               <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-                All progress will be lost and the project will be reset to its initial state. This action cannot be undone.
+                Tüm ilerleme silinecek ve proje başa dönecek. Bu işlem geri alınamaz.
               </p>
             </div>
             <div className="flex flex-col w-full gap-2 mt-2">
@@ -315,13 +315,13 @@ export function OutputReviewModal() {
                 onClick={confirmReset}
                 className="w-full py-4 bg-red-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-red-600 active:scale-[0.98] transition-all"
               >
-                Yes, Reset Project
+                Evet, Projeyi Sıfırla
               </button>
               <button
                 onClick={() => setIsConfirmingReset(false)}
                 className="w-full py-4 bg-zinc-100 text-zinc-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] hover:bg-zinc-200 active:scale-[0.98] transition-all"
               >
-                No, Go Back
+                Hayır, Geri Dön
               </button>
             </div>
           </div>

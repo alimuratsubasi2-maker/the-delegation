@@ -8,10 +8,10 @@ import { useUiStore } from '../integration/store/uiStore'
 import DeleteTaskModal from './DeleteTaskModal'
 
 const COLUMNS: { status: TaskStatus; label: string }[] = [
-  { status: 'scheduled', label: 'Scheduled' },
-  { status: 'on_hold', label: 'On Hold' },
-  { status: 'in_progress', label: 'In Progress' },
-  { status: 'done', label: 'Done' },
+  { status: 'scheduled', label: 'Planlandı' },
+  { status: 'on_hold', label: 'Onay Bekliyor' },
+  { status: 'in_progress', label: 'Yapılıyor' },
+  { status: 'done', label: 'Bitti' },
 ]
 
 interface KanbanPanelProps {
@@ -78,7 +78,7 @@ function TaskCard({ task }: { task: Task; key?: string }) {
                   setIsDeleteModalOpen(true)
                 }}
                 className="p-1 text-zinc-300 hover:text-red-500 hover:bg-red-50 rounded transition-all"
-                title="Remove task"
+                title="Görevi kaldır"
               >
                 <Trash2 size={12} />
               </button>
@@ -117,7 +117,7 @@ function TaskCard({ task }: { task: Task; key?: string }) {
                 borderColor: USER_COLOR_SOFT
               }}
             >
-              working
+              çalışıyor
             </span>
           )}
 
@@ -128,7 +128,7 @@ function TaskCard({ task }: { task: Task; key?: string }) {
                 setActiveAuditTaskId(task.id);
               }}
               className="p-1 px-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all flex items-center gap-1.5 group/audit"
-              title="View work details"
+              title="İş detayını gör"
             >
               {task.revisions?.length > 0 && (
                 <span className="text-[10px] font-black text-zinc-300 group-hover/audit:text-emerald-400 transition-colors">
@@ -176,7 +176,7 @@ export function KanbanPanel({ height = 320 }: KanbanPanelProps) {
                   ))}
                   {colTasks.length === 0 && (
                     <div className="border border-dashed border-zinc-100 rounded-lg p-4 flex items-center justify-center select-none">
-                      <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Empty</span>
+                      <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Boş</span>
                     </div>
                   )}
                 </div>

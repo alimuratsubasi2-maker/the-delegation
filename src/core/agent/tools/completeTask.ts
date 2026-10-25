@@ -18,7 +18,7 @@ export function completeTask(agent: AgentActionContext, args: { taskId: string, 
     agent.setState('on_hold');
     agent.appendHistory({
       role: 'assistant',
-      content: `I've finished **"${taskTitle}"** and submitted it for review.`,
+      content: `**"${taskTitle}"** görevini bitirdim ve onayına sundum.`,
       metadata: { reviewTaskId: taskId }
     });
     return true;

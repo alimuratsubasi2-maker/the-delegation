@@ -89,7 +89,7 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                             borderColor: `${agent.color}30`
                           }}
                         >
-                          Lead Agent
+                          Lider Ajan
                         </div>
                       ) : (
                         <div
@@ -100,7 +100,7 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                             borderColor: `${agent.color}30`
                           }}
                         >
-                          Subagent
+                          Alt Ajan
                         </div>
                       )}
                     </div>
@@ -119,11 +119,11 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                       <div className="flex items-center justify-center w-4 h-4 rounded text-white shadow-sm" style={{ backgroundColor: USER_COLOR }}>
                         <MessageSquareWarning size={10} strokeWidth={3} />
                       </div>
-                      <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: USER_COLOR }}>Review Requested</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: USER_COLOR }}>Onay İsteniyor</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Active</span>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Aktif</span>
                     </div>
                   </div>
                   <p className="text-[12px] font-bold text-darkDelegation leading-tight mt-1.5">
@@ -143,13 +143,13 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                     >
                       <MessageSquareWarning size={12} strokeWidth={3} />
                     </div>
-                    <span style={{ color: USER_COLOR }}>Review Requested</span>
+                    <span style={{ color: USER_COLOR }}>Onay İsteniyor</span>
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-[12px] font-bold text-darkDelegation leading-tight">
                       {isLeadAgentIdle
-                        ? "Review the user brief with the team."
-                        : `I've finished the task "${tasksOnHold[0]?.title ?? 'Work'}". I've submitted my work for your review.`}
+                        ? "Proje özetini ekiple konuş."
+                        : `"${tasksOnHold[0]?.title ?? 'İş'}" görevini bitirdim, onayına sundum.`}
                     </p>
 
                     {isLeadAgentIdle && (system.outputType === 'image' || system.outputType === 'video') && (
@@ -166,12 +166,12 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                       {isLeadAgentIdle ? (
                         <>
                           <MessageSquare size={14} strokeWidth={3} />
-                          Chat about the brief
+                          Proje özetini konuş
                         </>
                       ) : (
                         <>
                           <GitPullRequest size={14} strokeWidth={3} />
-                          Review Task
+                          Görevi İncele
                         </>
                       )}
                     </button>
@@ -186,14 +186,14 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                     <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex flex-col gap-3 shadow-sm">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-yellow-700">Project Ready</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-yellow-700">Proje Hazır</span>
                       </div>
                       <button
                         onClick={() => setFinalOutputOpen(true)}
                         className="flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-black px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all w-full shadow-sm"
                       >
                         <FolderOpen size={14} strokeWidth={3} />
-                        View Final Output
+                        Son Çıktıyı Gör
                       </button>
                     </div>
                   ) : isChatting ? (
@@ -211,7 +211,7 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                       {canChat ? (
                         <>
                           <MessageSquare size={13} className="text-white" />
-                          Open Chat
+                          Sohbet Aç
                         </>
                       ) : (
                         <>
@@ -239,7 +239,7 @@ const InspectorPanel: React.FC<InspectorPanelProps> = ({ isFloating }) => {
                     className="w-full h-10 px-4 bg-darkDelegation hover:bg-black text-white rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 text-[10px] font-black uppercase tracking-widest shadow-md"
                   >
                     <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                    Close Chat
+                    Sohbeti Kapat
                   </button>
                 </div>
               </div>

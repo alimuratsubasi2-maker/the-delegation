@@ -28,7 +28,7 @@ const CopyButton: React.FC<{ text: string }> = ({ text }) => {
         <button
             onClick={handleCopy}
             className={`p-1 rounded transition-all cursor-pointer ${copied ? 'text-emerald-500' : 'text-zinc-300 hover:text-zinc-600 hover:bg-zinc-100'}`}
-            title="Copy to clipboard"
+            title="Panoya kopyala"
         >
             {copied ? <Check size={10} /> : <Copy size={10} />}
         </button>
@@ -138,7 +138,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                         <div className="flex items-center gap-1.5 opacity-50 hover:opacity-100 transition-opacity">
                                             <ChevronRight size={10} className="text-zinc-400 group-open/sp:rotate-90 transition-transform" />
                                             <Terminal size={10} />
-                                            <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">System Instruction</span>
+                                            <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Sistem Talimatı</span>
                                         </div>
                                         <div onClick={e => e.stopPropagation()}>
                                             <CopyButton text={entry.systemInstruction} />
@@ -220,7 +220,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                                                 <div key={idx} className="bg-darkDelegation rounded-lg overflow-hidden border border-darkDelegation shadow-lg">
                                                                     <div className="bg-darkDelegation px-2.5 py-1.5 flex items-center justify-between">
                                                                         <span className="text-[9px] font-black text-emerald-400 font-mono tracking-wider">{tc.function?.name}</span>
-                                                                        <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">Call</span>
+                                                                        <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">Çağrı</span>
                                                                     </div>
                                                                     <div className="p-2.5 bg-darkDelegation/50">
                                                                         <pre className="text-[9px] text-zinc-300 font-mono wrap-break-word whitespace-pre-wrap">
@@ -244,7 +244,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                 <div className="flex items-center justify-between gap-1.5 mb-1.5 opacity-50">
                                     <div className="flex items-center gap-1.5">
                                         <MessageSquare size={10} />
-                                        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Response Details</span>
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Cevap Detayı</span>
                                     </div>
                                     <CopyButton text={entry.content || ''} />
                                 </div>
@@ -262,7 +262,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                         <div className="space-y-2">
                                             <div className="flex items-center gap-1.5 ml-1">
                                                 <Zap size={10} className="text-emerald-500" />
-                                                <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Tool calls</span>
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Araç çağrıları</span>
                                             </div>
                                             {entry.tool_calls.map((tc, i) => {
                                                 const name = tc.function?.name || '(unknown)';
@@ -272,7 +272,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                                     <div key={i} className="bg-darkDelegation rounded-lg overflow-hidden border border-darkDelegation shadow-lg">
                                                         <div className="bg-darkDelegation px-2.5 py-1.5 flex items-center justify-between">
                                                             <span className="text-[10px] font-black text-emerald-400 font-mono tracking-wider">{name}</span>
-                                                            <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">Arguments</span>
+                                                            <span className="text-[8px] font-bold text-zinc-500 uppercase tracking-tighter">Parametreler</span>
                                                         </div>
                                                         <div className="p-2.5 bg-darkDelegation/50">
                                                             {args && Object.keys(args).length > 0 ? (
@@ -287,7 +287,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                                                     ))}
                                                                 </div>
                                                             ) : (
-                                                                <span className="text-[9px] text-zinc-500 italic">No arguments</span>
+                                                                <span className="text-[9px] text-zinc-500 italic">Parametre yok</span>
                                                             )}
                                                         </div>
                                                     </div>
@@ -305,7 +305,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                         <div className="flex items-center gap-1.5 opacity-50 hover:opacity-100 transition-opacity">
                                             <ChevronRight size={10} className="text-zinc-400 group-open/raw:rotate-90 transition-transform" />
                                             <Download size={10} />
-                                            <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Raw LLM Response</span>
+                                            <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Ham Model Cevabı</span>
                                         </div>
                                         <div onClick={e => e.stopPropagation()}>
                                             <CopyButton text={JSON.stringify(entry.raw, null, 2)} />
@@ -398,7 +398,7 @@ ${JSON.stringify(entry.raw, null, 2)}
             {/* Header */}
             <div className="h-10 px-5 border-b border-zinc-100 flex items-center justify-between bg-white shrink-0 z-10">
                 <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Logs</span>
+                    <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">Günlük</span>
                     {filterAgent && (
                         <div
                             className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold text-white uppercase tracking-tighter animate-in fade-in zoom-in duration-200"
@@ -423,7 +423,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                 ? 'bg-darkDelegation text-white'
                                 : 'text-zinc-400 hover:text-darkDelegation hover:bg-zinc-50'
                                 }`}
-                            title="Filter by agent"
+                            title="Ajana göre filtrele"
                         >
                             <Filter size={14} />
                         </button>
@@ -444,7 +444,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                                             }`}
                                     >
                                         <div className={`w-2 h-2 rounded-full ${logFilterAgentIndex === null ? 'bg-darkDelegation' : 'bg-transparent border border-zinc-200'}`} />
-                                        All Agents
+                                        Tüm Ajanlar
                                     </button>
                                     <div className="h-px bg-zinc-50 my-1" />
                                     {agents.map((agent) => (
@@ -473,7 +473,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                         <button
                             onClick={handleDownloadAll}
                             className="text-zinc-400 hover:text-darkDelegation transition-colors p-1 rounded hover:bg-zinc-50 cursor-pointer"
-                            title="Download all as .txt"
+                            title="Tümünü .txt indir"
                         >
                             <Download size={14} />
                         </button>
@@ -488,14 +488,14 @@ ${JSON.stringify(entry.raw, null, 2)}
                     className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === 'activity' ? 'bg-white border-b-2 border-darkDelegation text-darkDelegation' : 'text-zinc-400 hover:text-zinc-600'
                         }`}
                 >
-                    Activity
+                    Etkinlik
                 </button>
                 <button
                     onClick={() => setActiveTab('technical')}
                     className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === 'technical' ? 'bg-white border-b-2 border-darkDelegation text-darkDelegation' : 'text-zinc-400 hover:text-zinc-600'
                         }`}
                 >
-                    Technical
+                    Teknik
                 </button>
             </div>
 
@@ -505,7 +505,7 @@ ${JSON.stringify(entry.raw, null, 2)}
 
                 {activeTab === 'activity' ? (
                     entries.length === 0 ? (
-                        <p className="text-zinc-300 text-[10px] font-bold uppercase tracking-widest text-center py-16">Awaiting actions...</p>
+                        <p className="text-zinc-300 text-[10px] font-bold uppercase tracking-widest text-center py-16">Hareket bekleniyor...</p>
                     ) : (
                         entries.map((entry) => {
                             const agent = agents.find(a => a.index === entry.agentIndex)
@@ -537,7 +537,7 @@ ${JSON.stringify(entry.raw, null, 2)}
                     )
                 ) : (
                     debugEntries.length === 0 ? (
-                        <p className="text-zinc-300 text-[10px] font-bold uppercase tracking-widest text-center py-16">No technical data...</p>
+                        <p className="text-zinc-300 text-[10px] font-bold uppercase tracking-widest text-center py-16">Teknik veri yok...</p>
                     ) : (
                         debugEntries.map((entry) => (
                             <DebugEntryView key={entry.id} entry={entry} />

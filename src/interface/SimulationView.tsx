@@ -37,7 +37,7 @@ const SimulationView: React.FC<SimulationViewProps> = ({ canvasRef, isFullscreen
           <button
             onClick={() => setIsFlowModalOpen(true)}
             className="flex items-center gap-4 hover:bg-zinc-50 px-2.5 py-1.5 rounded-2xl transition-all active:scale-95 group cursor-pointer"
-            title="View Team Flow"
+            title="Ekip Akışını Gör"
           >
             <TeamBadge system={activeSet} />
             <div className="w-8 h-8 rounded-full border border-zinc-100 flex items-center justify-center text-zinc-300 group-hover:text-darkDelegation group-hover:border-zinc-200 transition-colors">

@@ -33,7 +33,7 @@ const InternalHeader = ({ onClose, system }: { onClose: () => void, system: any 
   <div className="h-14 border-b border-zinc-100 bg-white flex items-center justify-between px-6 z-50 shrink-0">
     <div className="flex items-center gap-2">
       <Settings size={18} className="text-darkDelegation" strokeWidth={2} />
-      <h2 className="text-xs font-black text-darkDelegation uppercase tracking-[0.2em] ml-2">Manage Teams</h2>
+      <h2 className="text-xs font-black text-darkDelegation uppercase tracking-[0.2em] ml-2">Ekipleri Yönet</h2>
 
       <div className="ml-4">
         <SystemDebugOverlay system={system} />
@@ -54,8 +54,8 @@ const InternalHeader = ({ onClose, system }: { onClose: () => void, system: any 
 const AgentPlaceholder = () => (
   <div className="w-80 flex flex-col items-center justify-center p-8 text-center text-zinc-400">
     <User size={32} strokeWidth={1.5} className="mb-4 opacity-20" />
-    <p className="text-[10px] uppercase font-bold tracking-widest">Select an agent</p>
-    <p className="text-[9px] mt-2 leading-relaxed italic opacity-60">Click on any node in the flow to view and edit its details.</p>
+    <p className="text-[10px] uppercase font-bold tracking-widest">Bir ajan seç</p>
+    <p className="text-[9px] mt-2 leading-relaxed italic opacity-60">Detayları görmek ve düzenlemek için akıştaki bir ajana tıkla.</p>
   </div>
 );
 

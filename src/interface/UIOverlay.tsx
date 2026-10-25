@@ -58,22 +58,22 @@ function getAgentPhaseLabel(
   fallback: string,
 ): PhaseLabel {
   if (isGeneratingAsset && agentIndex === leadAgentIndex) {
-    return { text: 'Delivering...', className: 'text-indigo-400 animate-pulse' };
+    return { text: 'Teslim ediliyor...', className: 'text-indigo-400 animate-pulse' };
   }
   if (agentIndex === leadAgentIndex && phase === 'done') {
-    return { text: 'Project Ready!', className: 'text-yellow-400' };
+    return { text: 'Proje Hazır!', className: 'text-yellow-400' };
   }
   const holdTask = tasks.find(
     t => t.assignedAgentId === agentIndex && t.status === 'on_hold',
   );
   if (holdTask && phase !== 'done') {
-    return { text: 'Approval Needed', className: 'text-[#7EACEA]' };
+    return { text: 'Onay Gerekli', className: 'text-[#7EACEA]' };
   }
   const activeTask = tasks.find(
     t => t.assignedAgentId === agentIndex && t.status === 'in_progress',
   );
   if (activeTask) {
-    return { text: 'Working', className: 'text-emerald-400' };
+    return { text: 'Çalışıyor', className: 'text-emerald-400' };
   }
   return { text: fallback, className: 'text-white/70' };
 }

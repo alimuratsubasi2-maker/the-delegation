@@ -165,7 +165,7 @@ const ChatPanel: React.FC = () => {
                               onClick={() => setActiveAuditTaskId(msg.metadata.reviewTaskId)}
                               className="flex-1 min-w-[120px] px-4 py-2 bg-darkDelegation text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black active:scale-95 transition-all shadow-sm whitespace-nowrap"
                             >
-                              Review Task
+                              Görevi İncele
                             </button>
                           )}
                         </div>
@@ -232,7 +232,7 @@ const ChatPanel: React.FC = () => {
                   handleSend();
                 }
               }}
-              placeholder="Message (↵ to send)"
+              placeholder="Mesaj yaz (↵ gönder)"
               className="w-full bg-white border border-zinc-200 rounded-2xl px-3 py-3 text-sm focus:outline-none focus:ring-2 transition-all resize-none pr-12 [scrollbar-width:none]"
               style={{
                 borderColor: input.trim() ? USER_COLOR : undefined,
@@ -253,7 +253,7 @@ const ChatPanel: React.FC = () => {
           </button>
         </div>
         <p className="text-[8px] text-zinc-400 mt-2 text-center font-medium uppercase tracking-wider">
-          Shift + ↵ for new line
+          Shift + ↵ yeni satır
         </p>
       </div>
     </div>

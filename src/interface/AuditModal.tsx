@@ -79,7 +79,7 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-black text-darkDelegation uppercase tracking-widest">{agent?.name}</span>
                 {!isViewMode && (
-                  <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: USER_COLOR_LIGHT, color: USER_COLOR }}>Requires Review</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full" style={{ backgroundColor: USER_COLOR_LIGHT, color: USER_COLOR }}>Onay Bekliyor</span>
                 )}
               </div>
               <h2 className="text-2xl font-semibold text-darkDelegation tracking-tight leading-tight">
@@ -88,7 +88,7 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
               {isViewMode && (
                 <div className="flex items-center gap-2 mt-2">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">COMPLETED WORK</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">TAMAMLANAN İŞ</span>
                 </div>
               )}
             </div>
@@ -121,7 +121,7 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
                       onClick={() => setSelectedRevisionIndex(null)}
                       className="text-[9px] font-black uppercase text-zinc-400 hover:text-darkDelegation transition-colors"
                     >
-                      Back to latest
+                      En son sürüme dön
                     </button>
                   )}
                 </div>
@@ -143,7 +143,7 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
               <div className="w-56 shrink-0 flex flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-700">
                 <div className="flex items-center gap-2 mb-6" style={{ color: USER_COLOR }}>
                   <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: USER_COLOR }} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Version History</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">Sürüm Geçmişi</span>
                   <InfoBubble text="View previous iterations of this task. You can see how the work evolved or revert to a stronger version." />
                 </div>
                 <div className="space-y-2 overflow-y-auto pr-2 max-h-[60vh] [scrollbar-width:none]">
@@ -180,8 +180,8 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
                           : 'bg-white border-zinc-100 hover:border-emerald-200'}
                       `}
                     >
-                      <span className="text-[12px] font-black uppercase tracking-widest text-emerald-600">Active Review</span>
-                      <p className="text-[12px] text-emerald-400 font-medium leading-none">In review process...</p>
+                      <span className="text-[12px] font-black uppercase tracking-widest text-emerald-600">Aktif İnceleme</span>
+                      <p className="text-[12px] text-emerald-400 font-medium leading-none">İnceleniyor...</p>
                     </button>
                   )}
                 </div>
@@ -196,14 +196,14 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
             <div className="flex items-center gap-2 mb-2 text-zinc-400">
               <div className="flex items-center gap-2">
                 <GitPullRequest size={12} />
-                <span className="text-[9px] font-black uppercase tracking-widest">Your Feedback</span>
+                <span className="text-[9px] font-black uppercase tracking-widest">Geri Bildirimin</span>
               </div>
               <InfoBubble text="Provide specific instructions for what to change. The agent will read this and attempt a new version." />
             </div>
             <textarea
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
-              placeholder="Describe what needs to be changed before rejecting..."
+              placeholder="Reddetmeden önce neyin değişmesi gerektiğini yaz..."
               className="w-full bg-zinc-50 border border-zinc-100 rounded-xl p-3 text-[13px] focus:outline-none focus:ring-2 focus:ring-darkDelegation/5 transition-all resize-none h-20 placeholder:text-zinc-300 placeholder:italic"
             />
           </div>
@@ -231,7 +231,7 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
                 `}
               >
                 <AlertCircle size={14} strokeWidth={3} />
-                Reject with Feedback
+                Geri Bildirimle Reddet
               </button>
 
               <button
@@ -239,7 +239,7 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
                 className="h-12 px-10 bg-darkDelegation text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-black active:scale-95 flex items-center gap-2 shadow-xl shadow-darkDelegation/10"
               >
                 <CheckCircle2 size={14} strokeWidth={3} />
-                Approve Task
+                Görevi Onayla
               </button>
             </>
           )}

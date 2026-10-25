@@ -142,8 +142,8 @@ export class AgentBrain {
         console.warn(`[AgentBrain:${this.host.data.name}] Malformed function call detected.`);
       } else if (hasToolCallsOnly && !isInternalTrigger) {
         finalContent = isBrief
-          ? "Project brief set. Let's begin!"
-          : 'Working on it...';
+          ? 'Proje özeti kaydedildi. Başlıyoruz!'
+          : 'Üzerinde çalışıyorum...';
       } else if (!text && toolCalls.length === 0 && !isInternalTrigger) {
         finalContent = '...';
       }

@@ -69,7 +69,7 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
                     borderColor: `${data.color}40`
                   }}
                 >
-                  Lead Agent
+                  Lider Ajan
                 </div>
               )}
 
@@ -82,7 +82,7 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
                     borderColor: `${data.color}40`
                   }}
                 >
-                  Subagent
+                  Alt Ajan
                 </div>
               )}
 
@@ -96,7 +96,7 @@ export const VisualFlowNode = ({ data, selected, type }: any) => {
                   }}
                 >
                   <User size={8} strokeWidth={3} />
-                  Human-in-the-loop
+                  Onay Gerekli
                 </div>
               )}
             </div>

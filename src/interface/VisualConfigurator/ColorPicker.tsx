@@ -102,7 +102,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                 style={{ backgroundColor: suggestedColor }}
                 type="button"
               >
-                Use suggested
+                Öneriyi kullan
               </button>
             </div>
           )}

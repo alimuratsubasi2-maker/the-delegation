@@ -140,8 +140,8 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
               <Avatar type="user" color={USER_COLOR} size={64} />
             </div>
             <div>
-              <h4 className="text-sm font-black text-darkDelegation uppercase tracking-widest mb-1">Primary User</h4>
-              <p className="text-[11px] text-zinc-500 font-medium leading-relaxed">This is you. Your identity and role are fixed across all teams for consistency.</p>
+              <h4 className="text-sm font-black text-darkDelegation uppercase tracking-widest mb-1">Ana Kullanıcı</h4>
+              <p className="text-[11px] text-zinc-500 font-medium leading-relaxed">Bu sensin. Rolün tüm ekiplerde aynıdır.</p>
             </div>
           </div>
         ) : (
@@ -152,7 +152,7 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                 <div className="space-y-1.5 px-1">
                   <div className="flex items-center gap-1.5">
                     <Pipette size={12} className="text-zinc-400" />
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Agent Color</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Ajan Rengi</label>
                   </div>
                   <ColorPicker
                     color={editData.color}
@@ -174,7 +174,7 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                   />
                   {nameCollision && (
                     <p className="text-[9px] text-red-500 font-bold uppercase tracking-tight px-1">
-                      This name is already used in the team
+                      Bu isim ekipte zaten var
                     </p>
                   )}
                 </div>
@@ -208,7 +208,7 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                   value={editData.description}
                   onChange={(e) => updateDraft({ description: e.target.value })}
                   className="w-full h-48 px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-xl text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-black/5 resize-none font-medium text-zinc-600"
-                  placeholder="What is this agent specialized in? What are its primary goals and constraints?"
+                  placeholder="Bu ajan neyde uzman? Hedefleri ve sınırları neler?"
                 />
               ), 'A concise yet comprehensive definition of the agent\'s role, expertise, and operational guidelines.')}
             </div>
@@ -223,7 +223,7 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                       <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
                         <Check size={10} className="text-zinc-700" />
                       </div>
-                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Set Project Brief</span>
+                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Proje Özetini Belirle</span>
                     </div>
                   )}
                   {(editData.subagents?.length || 0) > 0 && (
@@ -231,27 +231,27 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                       <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
                         <Check size={10} className="text-zinc-700" />
                       </div>
-                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Propose Tasks</span>
+                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Görev Ata</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
                       <Check size={10} className="text-zinc-700" />
                     </div>
-                    <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Execute & Complete Tasks</span>
+                    <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Görevleri Yap ve Bitir</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
                       <Check size={10} className="text-zinc-700" />
                     </div>
-                    <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Autonomous Reasoning</span>
+                    <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Bağımsız Düşünme</span>
                   </div>
                   {isLead && (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
                         <Check size={10} className="text-zinc-700" />
                       </div>
-                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Deliver Project</span>
+                      <span className="text-[10px] font-black text-zinc-700 uppercase tracking-tight">Projeyi Teslim Et</span>
                     </div>
                   )}
                 </div>
@@ -277,10 +277,10 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
                       className={`text-[10px] font-black uppercase tracking-tight ${editData.humanInTheLoop ? '' : 'text-zinc-700'}`}
                       style={{ color: editData.humanInTheLoop ? USER_COLOR : undefined }}
                     >
-                      Human-in-the-loop
+                      Onay Gerekli
                     </span>
                     <span className="text-[9px] text-zinc-500 font-medium leading-tight max-w-[160px]">
-                      Agent must request your validation before completing any task.
+                      Ajan her görevi bitirmeden önce senin onayını ister.
                     </span>
                   </div>
                   <div className={`
@@ -310,7 +310,7 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
             className={`w-full py-3 bg-darkDelegation hover:bg-black text-white rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-black/5 active:scale-95 ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <Save size={16} strokeWidth={2.5} />
-            Update Agent
+            Ajanı Güncelle
           </button>
           {onRemove && (
             <button
@@ -318,7 +318,7 @@ export const AgentConfigPanel: React.FC<AgentConfigPanelProps> = ({
               className="w-full py-2.5 text-red-500 hover:bg-red-50 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
             >
               <Trash2 size={14} />
-              Remove from Team
+              Ekipten Çıkar
             </button>
           )}
         </div>
