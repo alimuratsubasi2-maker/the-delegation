@@ -175,7 +175,7 @@ export class WorldManager {
     if (!this.office) return;
     const signs: [string, string, number, THREE.Vector3][] = [
       ['NOVA DİJİTAL', '#a855f7', 0.9, new THREE.Vector3(0, 3.4, -4.6)],
-      ['STÜDYO', '#818cf8', 0.9, new THREE.Vector3(WING_OFFSET_X, 3.4, 4.6)],
+      ['STÜDYO', '#818cf8', 0.9, new THREE.Vector3(WING_OFFSET_X, 3.4, -4.6)],
       ['OBSIDIAN · BEYİN', '#c084fc', 0.32, BRAIN_POSITION.clone().add(new THREE.Vector3(0, BRAIN_HOVER - 0.95, 0))],
     ];
     for (const [text, color, h, pos] of signs) {

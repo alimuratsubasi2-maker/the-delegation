@@ -126,7 +126,7 @@ const ProjectView: React.FC = () => {
             className="flex items-center gap-2 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 hover:border-emerald-200 rounded-lg transition-all active:scale-95 group ml-4 cursor-pointer"
           >
             <span className="text-[10px] font-black uppercase tracking-tight text-emerald-600">
-              Total Est. ${useCoreStore.getState().totalEstimatedCost.toFixed(3)}
+              Tahmini Toplam ${useCoreStore.getState().totalEstimatedCost.toFixed(3)}
             </span>
             <Info size={11} className="text-emerald-500 group-hover:text-emerald-600" />
           </button>

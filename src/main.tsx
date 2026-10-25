@@ -20,5 +20,10 @@ if (trackingTopic) {
   Promise.all([import('./App'), import('./core/live/LiveShare'), import('./core/archive/ProjectArchive')]).then(([{ default: App }, { startLiveShare }]) => {
     startLiveShare();
     root.render(<App />);
+    // `?debug=1` exposes the stores so automated checks can stage a project without an API key
+    if (new URLSearchParams(window.location.search).has('debug')) {
+      Promise.all([import('./integration/store/coreStore'), import('./integration/store/uiStore'), import('./integration/store/teamStore')])
+        .then(([core, ui, team]) => { (window as any).__nova = { core: core.useCoreStore, ui: ui.useUiStore, team: team.useTeamStore }; });
+    }
   });
 }

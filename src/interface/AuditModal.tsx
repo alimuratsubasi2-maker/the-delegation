@@ -7,6 +7,7 @@ import { useUiStore } from '../integration/store/uiStore';
 import { getAllAgents } from '../data/agents';
 import { useActiveTeam } from '../integration/store/teamStore';
 import { Avatar } from './components/Avatar';
+import { OutputActions } from './components/OutputActions';
 import { InfoBubble } from './components/InfoBubble';
 import { USER_COLOR, USER_COLOR_LIGHT, USER_COLOR_SOFT } from '../theme/brand';
 
@@ -31,6 +32,10 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
   const isViewMode = viewOnly || task.status === 'done';
 
   const agent = agents.find(a => a.index === task.assignedAgentId);
+  const shownOutput = selectedRevisionIndex !== null
+    ? task.revisions[selectedRevisionIndex].output
+    : (isViewMode ? (task.output || task.draftOutput) : task.draftOutput) || '';
+  const isEmailAgent = !!agent && /email|followup|proposal/.test(agent.id);
 
   const handleApprove = () => {
     approveTask(taskId);
@@ -128,12 +133,11 @@ export const AuditModal: React.FC<AuditModalProps> = ({ taskId, isOpen, onClose,
                 <div className="p-8 bg-zinc-50/50 rounded-3xl border border-zinc-100 min-h-[350px] shadow-inner">
                   <div className="markdown-content text-darkDelegation text-sm leading-relaxed">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {selectedRevisionIndex !== null
-                        ? task.revisions[selectedRevisionIndex].output
-                        : (isViewMode ? (task.output || task.draftOutput) : (task.draftOutput || 'No content produced.'))}
+                      {shownOutput || 'Henüz içerik yok.'}
                     </ReactMarkdown>
                   </div>
                 </div>
+                {shownOutput && <OutputActions text={shownOutput} showEmail={isEmailAgent} className="mt-3" />}
               </section>
 
             </div>
