@@ -22,7 +22,8 @@ const b64ToBytes = (b64: string) => {
 async function register(topic: string, sub: PushSubscription) {
   const res = await fetch(`${cloudBase()}push/sub`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    // text/plain keeps this a CORS "simple" request (the Space answers without a preflight)
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ topic, sub: sub.toJSON(), url: window.location.href }),
   });
   if (!res.ok) throw new Error(`kayıt başarısız (${res.status})`);
