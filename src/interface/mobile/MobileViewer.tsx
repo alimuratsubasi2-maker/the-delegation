@@ -64,6 +64,16 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
   const [now, setNow] = useState(Date.now());
   const seen = useRef(new Set<string>());
 
+  // Cloud office (Hugging Face Space) sleeps after 48h without visits: keep it awake while the phone page is open
+  useEffect(() => {
+    const ping = new URLSearchParams(window.location.search).get('ping');
+    if (!ping || !/^https:\/\/[\w.-]+\.hf\.space\/?$/.test(ping)) return;
+    const hit = () => fetch(ping, { mode: 'no-cors' }).catch(() => {});
+    hit();
+    const id = setInterval(hit, 10 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     const handle = async (raw: { id: string; event?: string; message?: string }) => {
       if (raw.event && raw.event !== 'message') return;
