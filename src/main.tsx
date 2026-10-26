@@ -10,6 +10,11 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 const trackingTopic = new URLSearchParams(window.location.search).get('takip');
 
+// Service worker makes the page installable as a phone app (home-screen icon); skipped on the cloud worker
+if ('serviceWorker' in navigator && !new URLSearchParams(window.location.search).has('sunucu')) {
+  navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {});
+}
+
 // `?takip=<topic>` opens the lightweight phone tracking page instead of the 3D office
 if (trackingTopic) {
   document.title = 'Nova Ofis · Takip';
