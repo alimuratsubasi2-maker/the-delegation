@@ -22,7 +22,6 @@ import { setLiveChatHandler } from '../core/live/LiveShare';
 
 /** Headless cloud worker mode: same office, throttled rendering. */
 const SERVER_MODE = new URLSearchParams(window.location.search).has('sunucu');
-const SERVER_FRAME_MS = 500;
 
 /**
  * SceneManager — Visual Integration Layer.
@@ -344,15 +343,10 @@ export class SceneManager {
     if (!useCoreStore.getState().isResizing) this.engine.onResize(w, h);
   }
 
-  private lastServerFrame = 0;
-
   private animate() {
-    // Cloud worker (?sunucu=1): nobody watches the screen, so draw ~2 fps and spend the CPU on the agents
-    if (SERVER_MODE) {
-      const now = performance.now();
-      if (now - this.lastServerFrame < SERVER_FRAME_MS) return;
-      this.lastServerFrame = now;
-    }
+    // Cloud worker (?sunucu=1): no screen and no GPU there; the WebGL fallback cannot run the character
+    // compute pass, so skip the scene entirely — agents think and work through the store, not the renderer
+    if (SERVER_MODE) return;
     this.engine.timer.update(); const delta = this.engine.timer.getDelta();
     this.stage.update(); this.worldManager.update(delta);
     if (this.controller) {
