@@ -233,6 +233,11 @@ async function publishMessage(agentIndex: number, agentName: string, role: strin
   if (!enabled) return;
   try {
     await post(topic, await encodePayload({ k: 'msg', ai: agentIndex, n: agentName, r: role, x: clip(text, 3000), ts: Date.now() }));
+    // Agent replies also go to the phone app as a push (ntfy only — Telegram stays for milestones)
+    if (role === 'assistant') {
+      post(`${topic}-bildirim`, clip(text, 180), { Title: encodeURIComponent(`💬 ${agentName}`), Click: trackingUrl(topic), Tags: 'chat' })
+        .catch(() => {});
+    }
   } catch (e) {
     console.warn('[Live] chat message failed', e);
   }

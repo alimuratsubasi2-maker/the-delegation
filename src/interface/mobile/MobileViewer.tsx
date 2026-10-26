@@ -1,8 +1,9 @@
-import { Check, ChevronDown, Copy, MessageSquare, Pencil, Send, Wifi, WifiOff } from 'lucide-react';
+import { Bell, BellOff, Check, ChevronDown, Copy, MessageSquare, Pencil, Send, Wifi, WifiOff } from 'lucide-react';
 import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { decodePayload, NTFY, sendCommand } from '../../core/live/LiveShare';
+import { enablePush, pushSupported, refreshPush } from '../../core/live/PhonePush';
 import { MicButton } from '../components/MicButton';
 
 // The 3D mirror pulls in three.js, so it loads separately from the light status view
@@ -63,6 +64,22 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
   const [loaded, setLoaded] = useState(false);
   const [now, setNow] = useState(Date.now());
   const seen = useRef(new Set<string>());
+  const [pushOn, setPushOn] = useState(false);
+  const [pushNote, setPushNote] = useState('');
+
+  useEffect(() => { refreshPush(topic).then(setPushOn); }, [topic]);
+
+  const turnOnPush = async () => {
+    setPushNote('Bildirimler açılıyor…');
+    try {
+      await enablePush(topic);
+      setPushOn(true);
+      setPushNote('✅ Bildirimler açık. Uygulama kapalıyken de haber gelecek.');
+    } catch (e) {
+      setPushNote(`⚠️ ${(e as Error).message}`);
+    }
+    setTimeout(() => setPushNote(''), 6000);
+  };
 
   // Cloud office (Hugging Face Space) sleeps after 48h without visits: keep it awake while the phone page is open
   useEffect(() => {
@@ -135,7 +152,19 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
         <span className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${live ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'}`}>
           {live ? <Wifi size={12} /> : <WifiOff size={12} />} {live ? 'CANLI' : 'BAĞLANTI YOK'}
         </span>
+        {pushSupported() && (
+          <button
+            onClick={turnOnPush}
+            aria-label="Bildirimler"
+            className={`w-9 h-9 rounded-xl flex items-center justify-center ${pushOn ? 'bg-violet-600/25 text-violet-300' : 'bg-fuchsia-600 text-white animate-pulse'}`}
+          >
+            {pushOn ? <Bell size={16} /> : <BellOff size={16} />}
+          </button>
+        )}
       </div>
+      {pushNote && (
+        <div className="fixed top-16 inset-x-4 z-20 p-3 rounded-xl bg-[#18213a] border border-violet-500/40 text-sm text-[#e7e9f5] shadow-lg">{pushNote}</div>
+      )}
 
       {/* Tabs: live 3D office (default) or the status lists */}
       <div className="sticky top-[61px] z-10 bg-[#0b1122] px-4 pt-2 pb-2 flex gap-2">
