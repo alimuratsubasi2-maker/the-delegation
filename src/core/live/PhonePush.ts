@@ -4,10 +4,11 @@
  * phone gets a system notification even while the app is closed.
  */
 
-/** Cloud worker base URL from the `?ping=` param (only cloud phone links carry it). */
+import { CLOUD_HOST } from './LiveShare';
+
+/** Cloud worker base URL (only cloud phone links carry it). */
 export function cloudBase(): string | null {
-  const ping = new URLSearchParams(window.location.search).get('ping');
-  return ping && /^https:\/\/[\w.-]+\.hf\.space\/?$/.test(ping) ? ping.replace(/\/?$/, '/') : null;
+  return CLOUD_HOST;
 }
 
 export function pushSupported(): boolean {

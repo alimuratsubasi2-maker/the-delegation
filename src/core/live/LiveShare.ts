@@ -15,7 +15,20 @@ import { useUiStore } from '../../integration/store/uiStore';
  * `<topic>-bildirim` (ntfy app) and optionally to a Telegram bot.
  */
 
-export const NTFY = 'https://ntfy.sh';
+// hf.space in production; a local port only when testing the cloud worker on this PC
+const CLOUD_HOST_RE = /^(https:\/\/[\w.-]+\.hf\.space|http:\/\/127\.0\.0\.1:\d+)\/?$/;
+/** Cloud office host (Hugging Face Space): `?relay=` on the office page, `?ping=` on the phone link. */
+export const CLOUD_HOST = (() => {
+  const q = new URLSearchParams(window.location.search);
+  const host = q.get('relay') || q.get('ping');
+  return host && CLOUD_HOST_RE.test(host) ? host.replace(/\/?$/, '/') : null;
+})();
+/**
+ * Message relay. The cloud office relays through its own Space: ntfy.sh allows only 250 messages a day
+ * per IP and Space IPs are shared, so the phone went silent once that quota ran out. The desktop office
+ * keeps using ntfy.sh.
+ */
+export const RELAY = CLOUD_HOST ? `${CLOUD_HOST}relay` : 'https://ntfy.sh';
 const STORAGE_KEY = 'live-share';
 const PUBLISH_DEBOUNCE_MS = 4000;
 const MIN_PUBLISH_INTERVAL_MS = 12000;
@@ -64,7 +77,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
 }));
 
 export const trackingUrl = (topic: string) =>
-  `${window.location.origin}${import.meta.env.BASE_URL}?takip=${encodeURIComponent(topic)}`;
+  `${window.location.origin}${import.meta.env.BASE_URL}?takip=${encodeURIComponent(topic)}${CLOUD_HOST ? `&ping=${CLOUD_HOST}` : ''}`;
 
 // ── Encoding (shared with the phone viewer) ───────────────────
 
@@ -126,7 +139,7 @@ function buildSnapshot() {
 // ── Publishing ───────────────────────────────────────────────
 
 async function post(topic: string, body: string, headers: Record<string, string> = {}) {
-  const res = await fetch(`${NTFY}/${topic}`, { method: 'POST', body, headers });
+  const res = await fetch(`${RELAY}/${topic}`, { method: 'POST', body, headers });
   if (!res.ok) throw new Error(`ntfy ${res.status}`);
 }
 
@@ -188,7 +201,7 @@ function listenForCommands() {
   cmdSource = null;
   const { enabled, topic } = useLiveStore.getState();
   if (!enabled) return;
-  cmdSource = new EventSource(`${NTFY}/${topic}-cmd/sse`);
+  cmdSource = new EventSource(`${RELAY}/${topic}-cmd/sse`);
   cmdSource.onmessage = async (ev) => {
     try {
       const msg = JSON.parse(ev.data);

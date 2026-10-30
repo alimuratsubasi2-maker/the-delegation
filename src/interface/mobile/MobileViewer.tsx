@@ -2,7 +2,7 @@ import { Bell, BellOff, Check, ChevronDown, Copy, MessageSquare, Pencil, Send, W
 import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { decodePayload, NTFY, sendCommand } from '../../core/live/LiveShare';
+import { decodePayload, RELAY, sendCommand } from '../../core/live/LiveShare';
 import { enablePush, pushSupported, refreshPush } from '../../core/live/PhonePush';
 import { MicButton } from '../components/MicButton';
 
@@ -114,12 +114,12 @@ const MobileViewer: React.FC<{ topic: string }> = ({ topic }) => {
     let es: EventSource | null = null;
     (async () => {
       try {
-        const res = await fetch(`${NTFY}/${topic}/json?poll=1&since=12h`);
+        const res = await fetch(`${RELAY}/${topic}/json?poll=1&since=12h`);
         const text = await res.text();
         for (const line of text.split('\n').filter(Boolean)) await handle(JSON.parse(line));
       } catch { /* history unavailable, live only */ }
       setLoaded(true);
-      es = new EventSource(`${NTFY}/${topic}/sse`);
+      es = new EventSource(`${RELAY}/${topic}/sse`);
       es.onopen = () => setLive(true);
       es.onerror = () => setLive(false);
       es.onmessage = (ev) => handle(JSON.parse(ev.data));
