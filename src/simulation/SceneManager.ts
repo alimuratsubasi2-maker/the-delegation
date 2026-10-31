@@ -8,7 +8,7 @@ import { CharacterManager } from './entities/CharacterManager';
 import { InputManager } from './input/InputManager';
 import { NavMeshManager } from './pathfinding/NavMeshManager';
 import { PoiManager } from './world/PoiManager';
-import { BRAIN_POI_ID, CLAUDE_POI_ID, WorldManager } from './world/WorldManager';
+import { BRAIN_POI_ID, CLAUDE_POI_ID, HUKUK_POI_ID, WorldManager } from './world/WorldManager';
 import { MascotManager } from './entities/MascotManager';
 import { getAllCharacters } from '../data/agents';
 
@@ -286,7 +286,10 @@ export class SceneManager {
     if (working) {
       // The Obsidian agent works under the floating brain crystal instead of at a desk
       const agent = getAllAgents(getActiveAgentSet()).find(a => a.index === index);
-      const id = agent?.id.startsWith('obsidian') ? BRAIN_POI_ID : agent?.id.startsWith('claude') ? CLAUDE_POI_ID : `sit_work-${index}`;
+      const id = agent?.id.startsWith('obsidian') ? BRAIN_POI_ID
+        : agent?.id.startsWith('claude') ? CLAUDE_POI_ID
+        : agent?.id.startsWith('hukuk') ? HUKUK_POI_ID
+        : `sit_work-${index}`;
       let poi = this.poiManager.getPoi(id);
       if (!poi) {
          // Smart fallback: assign a desk based on order (agent index is 1-based)

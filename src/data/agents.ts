@@ -3,11 +3,11 @@ import { DEFAULT_MODELS } from '../core/llm/constants';
 
 export const USER_ID = 'user';
 export const USER_NAME = 'User';
-export const MAX_AGENTS = 12;
+export const MAX_AGENTS = 13;
 export { USER_COLOR };
 export const DEFAULT_AGENTIC_SET_ID = 'single-agent';
 /** Bump whenever built-in teams change so stale saved copies are discarded. */
-export const BUILT_IN_TEAMS_VERSION = 7;
+export const BUILT_IN_TEAMS_VERSION = 8;
 export interface AgentNode {
   id: string;
   index: number;
@@ -53,12 +53,21 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       id: 'nova-ceo',
       index: 1,
       name: 'Ajans Müdürü',
-      description: 'Müşteri talebini web/uygulama, AI reklam ve video edit ekiplerine böler, TL fiyat ve teslim planını çıkarır, son teslimi onaylar. İlk görevi her zaman Obsidian’a verir: kullanıcının geçmiş projelerinden ilgili bağlamı toplatır.',
+      description: 'Müşteri talebini web/uygulama, AI reklam ve video edit ekiplerine böler, TL fiyat ve teslim planını çıkarır, son teslimi onaylar. İlk görevi her zaman Obsidian’a verir: kullanıcının geçmiş projelerinden ilgili bağlamı toplatır. Web sitesi, uygulama, ödeme/abonelik, form, kullanıcı içeriği veya e-posta içeren HER işte son teslimden önce Hukuk Uyum Denetçisi’ne kontrol görevi verir; denetçinin eklediği yasal metinler ve düzeltmeler son teslime girer.',
       color: '#7C3AED',
       model: DEFAULT_MODELS.text,
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
+        {
+          id: 'hukuk-nova-dijital',
+          index: 13,
+          name: 'Hukuk Uyum Denetçisi',
+          description: 'Türkiye hukuk uyum denetçisi (kontrol listesi uygular, hukuki görüş vermez). Ekibin yaptığı her web sitesi, uygulama ve reklam işini teslimden önce 6 başlıkta kontrol eder ve EKSİKLERİ TESLİME EKLER. 1) Ödeme/abonelik (6502, Mesafeli Sözleşmeler Yönetmeliği): toplam fiyat, yenileme periyodu, otomatik yenileme, iptal yolu, cayma hakkı, net “ödemeyi onaylıyorum” adımı, deneme bitince ücret çekileceği uyarısı; gizli/küçük puntolu şart yok. 2) Tanıtım e-postaları (6563): onay, gönderen kimliği ve iletişim adresi, çalışan ret/çıkış yolu. 3) Kullanıcı yüklemeleri (5846 FSEK): hak sahibi bildirimi ve içerik kaldırma mekanizması. 4) Kullanıcı içeriği (5651): şikâyet/bildirim kanalı, kaldırma süreci, görünür yer sağlayıcı ve iletişim bilgisi, log saklama kararı. 5) KVKK aydınlatma metni (m.10): toplanan veriler, amaç, kimlerle paylaşıldığı, saklama süresi, kullanıcı hakları; ilk kullanımdan önce gösterilir, mağaza gizlilik politikasıyla aynı. 6) Yurt dışına veri ve harici kaynaklar (KVKK m.9/12): Google Fonts/CDN, analitik, hata izleme, reklam/takip SDK’ları, oturum kaydı, harici betik/görsel, e-posta ve ödeme sağlayıcıları; hangi veri gidiyor, çerez onayı var mı, aydınlatmada yurt dışı aktarım dayanağı yazıyor mu; parola/form girdisini kaydeden araç olmamalı (yazı tipini yerelde barındırmayı önerir). ÇIKTI: başlık başlık Durum (Var/Yok/Kısmen/Doğrulanamadı) + risk (yüksek/orta/düşük) tablosu, risk sırasına göre en önemli 5 madde ve eksik metinlerin kullanıma hazır taslakları (KVKK aydınlatma metni, çerez bildirimi, mesafeli satış/abonelik bilgilendirmesi, iletişim ve şikâyet bölümü, e-posta ret satırı). Ceza tutarlarını kesin ceza değil 2026 kanuni üst sınırı olarak anar; emin olmadığını “doğrulanamadı” diye yazar.',
+          color: '#CA8A04',
+          model: DEFAULT_MODELS.text,
+          position: { x: 0, y: 580 }
+        },
         {
           id: 'claude-nova-dijital',
           index: 12,
@@ -288,12 +297,21 @@ export const AGENTIC_SETS: AgenticSystem[] = [
       id: 'sales-manager',
       index: 1,
       name: 'Satış Müdürü',
-      description: 'Hedef segmenti (YouTube kanalları, esnaf, şirketler) seçer, ekibi sırayla çalıştırır ve gönderilecek metinleri kullanıcı onayına sunar. İlk görevi her zaman Obsidian’a verir.',
+      description: 'Hedef segmenti (YouTube kanalları, esnaf, şirketler) seçer, ekibi sırayla çalıştırır ve gönderilecek metinleri kullanıcı onayına sunar. İlk görevi her zaman Obsidian’a verir. Gönderilecek her e-postayı ve teklifi kullanıcıya sunmadan önce Hukuk Uyum Denetçisi’ne kontrol ettirir.',
       color: '#0EA5E9',
       model: DEFAULT_MODELS.text,
       humanInTheLoop: true,
       position: { x: 0, y: 130 },
       subagents: [
+        {
+          id: 'hukuk-musteri-kazanma',
+          index: 9,
+          name: 'Hukuk Uyum Denetçisi',
+          description: 'Türkiye hukuk uyum denetçisi (kontrol listesi uygular, hukuki görüş vermez). Gönderilecek her tanışma, takip ve teklif e-postasını 6563 sayılı Elektronik Ticaret Kanunu ve KVKK açısından kontrol eder ve eksikleri metne EKLER: alıcı tacir/esnaf/şirket mi yoksa gerçek kişi mi (gerçek kişiye önceden onay almadan ticari ileti risklidir, bunu işaretler); gönderenin kimliği ve iletişim adresi (Nova Dijital + e-posta); kolay ve ücretsiz ret yolu (ekip link kullanmıyorsa tanışma tonunu bozmayan tek satır: “Bu tür e-postalar almak istemezseniz yanıtlamanız yeterli, bir daha yazmayız.”); aday listesindeki kişisel verilerin yalnızca bu amaçla kullanılması ve gereksiz veri tutulmaması; teklifte fiyat, kapsam, ödeme ve cayma/iptal koşullarının açık yazılması. ÇIKTI: e-posta başına Var/Yok/Kısmen kontrolü, risk seviyesi ve düzeltilmiş metin. Ceza tutarlarını kesin ceza değil 2026 kanuni üst sınırı olarak anar (onaysız ileti 14.309 TL, kimlik/adres eksik 28.620 TL, ret yolu yok 42.930 TL).',
+          color: '#CA8A04',
+          model: DEFAULT_MODELS.text,
+          position: { x: 0, y: 580 }
+        },
         {
           id: 'claude-musteri-kazanma',
           index: 8,
