@@ -229,7 +229,7 @@ export function FinalOutputModal() {
 
           <div className="flex justify-between items-center">
             <div className="flex gap-2 flex-wrap">
-              {finalAssetType === 'text' && finalOutput && <OutputActions text={finalOutput} showEmail={activeTeam.id === 'musteri-kazanma'} />}
+              {finalAssetType === 'text' && finalOutput && <OutputActions text={finalOutput} showEmail={activeTeam.id === 'musteri-kazanma' || activeTeam.id === 'is-basvuru'} />}
               <button onClick={handleDownloadMd} className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-zinc-200 text-[10px] font-black uppercase text-zinc-500 hover:text-darkDelegation">
                 <Download size={13} /> .md indir
               </button>

@@ -24,6 +24,12 @@ export const BRIEF_TEMPLATES: Record<string, BriefTemplate[]> = {
     { label: 'Esnafa web sitesi', text: '[Şehir] bölgesindeki [sektör] işletmelerine web sitesi ve AI reklam videosu satacağız. 10 aday bulun ve her biri için 2 cümlelik, linksiz, çok kısa tanışma mesajı yazın.' },
     { label: 'Cevap geldi: teklif', text: '[Kanal/işletme adı] ilgilendiğini ve fiyat sorduğunu yazdı. Mesajı: "[gelen cevap]". Ona güncel fiyat listemizle kısa ve sıcak bir teklif e-postası yazın.' },
   ],
+  'is-basvuru': [
+    { label: 'Bugünün ilanları', text: 'Obsidian’daki Kariyer/Ilanlar notunda bugün eklenen ilanları değerlendirin. En uygun 3 tanesini seçin, her biri için şans puanı verin ve e-postayla başvurulabilenlere ilana özel başvuru e-postası yazın.' },
+    { label: 'Bu ilana başvur', text: 'Şu ilana başvuracağım: [ilan linki veya metni]. Şartları projelerimle eşleştirin, eksikleri dürüstçe yazın ve ilana özel başvuru e-postasını hazırlayın. İlan soru soruyorsa her soruyu gerçek bir olayla cevaplayın.' },
+    { label: 'Freelance ilanları', text: 'Projelerimi paraya çevirmek için Bionluk ve Upwork’e 3 hizmet ilanı hazırlayın: AI otomasyon / WhatsApp randevu botu, AI reklam videosu, YouTube video kurgusu. Her biri için başlık, açıklama ve 3 paket (TL / USD fiyatlı).' },
+    { label: 'Mülakat hazırlığı', text: '[Şirket adı] ile [tarih] günü görüşmem var. İlan: [link veya metin]. Muhtemel sorular, projelerimden kısa cevaplar, soracağım sorular ve çalışma saatlerimi nasıl anlatacağımı hazırlayın.' },
+  ],
   'shorts-fabrikasi': [
     { label: 'Historium Top 5', text: 'Historium kanalı için İngilizce "Top 5" tarih Shorts\'u. Konu: [konu]. 45-55 saniye, güçlü kanca, saniye damgalı senaryo ve yayın planı.' },
     { label: 'Finans TikTok', text: 'Para Mantığı TikTok hesabı için dikey finans videosu. Konu: [konu]. 30-45 saniye, basit anlatım, ekran yazıları ve altyazı vurguları.' },

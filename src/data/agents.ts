@@ -7,7 +7,7 @@ export const MAX_AGENTS = 13;
 export { USER_COLOR };
 export const DEFAULT_AGENTIC_SET_ID = 'single-agent';
 /** Bump whenever built-in teams change so stale saved copies are discarded. */
-export const BUILT_IN_TEAMS_VERSION = 8;
+export const BUILT_IN_TEAMS_VERSION = 9;
 export interface AgentNode {
   id: string;
   index: number;
@@ -375,6 +375,94 @@ export const AGENTIC_SETS: AgenticSystem[] = [
           description: 'Cevap gelmeyen adaylara 3-5 gün sonra gönderilecek kısa ve nazik hatırlatmayı yazar; baskı yapmaz, tek cümlelik değer ekler.',
           color: '#7DD3FC',
           model: DEFAULT_MODELS.text,
+          position: { x: 450, y: 430 }
+        }
+      ]
+    }
+  },
+  {
+    id: 'is-basvuru',
+    teamName: 'İş Başvuru',
+    teamType: 'Kariyer',
+    teamDescription: 'Ali’nin projelerini işe ve paraya çeviren kariyer ekibi: her gün bulunan ilanları (Obsidian → Kariyer/Ilanlar) değerlendirir, ilana özel başvuru e-postası, freelance teklif, LinkedIn metni ve mülakat hazırlığı yazar.',
+    color: '#10B981',
+    outputType: 'text',
+    outputModel: DEFAULT_MODELS.text,
+    outputAutoApprove: false,
+    user: { index: 0, model: 'Human', position: { x: 0, y: 0 } },
+    leadAgent: {
+      id: 'kariyer-lead',
+      index: 1,
+      name: 'Kariyer Koçu',
+      description: 'Ali Murat Subaşı için çalışır: Sağlık Bilimleri Üniv. Biyomedikal Cihaz Teknolojisi (önlisans) son sınıf, mezuniyet Haziran 2027, GNO 3.05, İstanbul. Hedef: STAJ DEĞİL ücretli iş — "Yapay Zeka Operatörü", AI içerik/otomasyon, AI video, freelance; uzaktan veya yarı zamanlı (hafta içi 17:00 sonrası + hafta sonu, 25-30 saat). İngilizce B2 (konuşma akıcı değil). İlk görevi her zaman Obsidian’a verir (Kariyer/Ilanlar ve Kariyer/Profil notları). Göndermeden önce her metni Claude’a kontrol ettirir. KESİN KURAL: CV’de ve başvuruda olmayan deneyim, unvan, müşteri veya rakam UYDURULMAZ.',
+      color: '#10B981',
+      model: DEFAULT_MODELS.text,
+      humanInTheLoop: true,
+      position: { x: 0, y: 130 },
+      subagents: [
+        {
+          id: 'claude-is-basvuru',
+          index: 8,
+          name: 'Claude',
+          description: 'Claude — kıdemli danışman ve kalite denetçisi. Teslimden önce tüm başvuru metinlerini gözden geçirir: profilde olmayan iddia var mı (uydurma deneyim, abartılmış unvan, müşteri sayısı), ilanın istediği her şarta değinilmiş mi, dil net ve kısa mı. Uydurma bulursa siler ve işaretler.',
+          color: '#D97757',
+          model: DEFAULT_MODELS.text,
+          position: { x: -420, y: 130 }
+        },
+        {
+          id: 'obsidian-kariyer',
+          index: 2,
+          name: 'Obsidian',
+          description: 'Ofisin beyni: Obsidian kasasındaki Kariyer/Ilanlar (her gün otomatik eklenen ilanlar, uygunluk puanı, e-posta adresi) ve Kariyer/Profil notlarını, ayrıca tüm projeleri bilir. Her işin başında ilgili ilanı ve Ali’nin bu ilana uyan gerçek projelerini özetler.',
+          color: '#A855F7',
+          model: DEFAULT_MODELS.text,
+          position: { x: 420, y: 130 }
+        },
+        {
+          id: 'kariyer-ilan-analisti',
+          index: 3,
+          name: 'İlan Analisti',
+          description: 'İlanı maddelere ayırır: zorunlu şartlar, artı şartlar, çalışma tipi, maaş. Her şartı Ali’nin gerçek projeleriyle eşleştirir (WhatsApp AI randevu asistanı, Telegram sesli mesaj→video botu, YouTube/Instagram otomasyonu, yerel AI 3D model üretici, SolidWorks API ile 83 bileşenli V6 motor, Jarvis sesli asistan, serbest video editörlüğü — 4M aboneli kanala deneme kurgusu, gezi YouTuber’ına 48 dk bölüm). Eksik şartları dürüstçe yazar ve 0-100 başvuru şansı verir.',
+          color: '#34D399',
+          model: DEFAULT_MODELS.text,
+          position: { x: -450, y: 280 }
+        },
+        {
+          id: 'kariyer-basvuru-yazari',
+          index: 4,
+          name: 'Başvuru Yazarı',
+          description: 'İlana özel başvuru e-postası veya ön yazı yazar. KURALLAR: ilk cümle ilandan somut bir noktaya değinir; 120-180 kelime; madde işareti yok; 1-2 gerçek proje örneği; çalışma saatleri dürüstçe belirtilir (mezuniyete kadar akşam + hafta sonu, Haziran 2027’den sonra tam zamanlı); ilan soru soruyorsa her soruyu ayrı ve gerçek bir olayla cevaplar; imza "Ali Murat Subaşı". İngilizce ilana İngilizce yazar.',
+          color: '#059669',
+          model: DEFAULT_MODELS.text,
+          humanInTheLoop: true,
+          position: { x: -150, y: 280 }
+        },
+        {
+          id: 'kariyer-linkedin',
+          index: 5,
+          name: 'Portföy & LinkedIn Uzmanı',
+          description: 'LinkedIn başlığı, Hakkımda metni, deneyim açıklamaları ve proje paylaşım gönderileri yazar (markdown işareti kullanmadan, LinkedIn’e yapıştırılabilir düz metin). Portföy sayfası için her projeye 2 cümlelik açıklama ve gösterilecek ekran kaydı listesi çıkarır. LinkedIn’de olmayan deneyim eklemez.',
+          color: '#6EE7B7',
+          model: DEFAULT_MODELS.text,
+          position: { x: 150, y: 280 }
+        },
+        {
+          id: 'kariyer-mulakat',
+          index: 6,
+          name: 'Mülakat Koçu',
+          description: 'Görüşmeye çağrılınca hazırlık paketi yazar: şirketin muhtemel 10 sorusu ve Ali’nin gerçek projelerinden STAR formatında kısa cevaplar, sorulacak 3 akıllı soru, maaş/çalışma saati konuşması için cümleler, ücretli deneme işine hazırlık.',
+          color: '#A7F3D0',
+          model: DEFAULT_MODELS.text,
+          position: { x: 450, y: 280 }
+        },
+        {
+          id: 'kariyer-freelance',
+          index: 7,
+          name: 'Freelance Teklif Uzmanı',
+          description: 'Projeleri doğrudan paraya çevirir: Bionluk, Upwork, Fiverr ve Armut için hizmet ilanı metni (başlık, açıklama, paketler) ve gelen bir işe teklif yazar. Hizmetler: AI otomasyon / WhatsApp randevu botu kurulumu, AI reklam videosu, YouTube video kurgusu, 3D model (STL) hazırlama, web sitesi/PWA. Fiyatları Nova Dijital listesine göre verir.',
+          color: '#047857',
+          model: DEFAULT_MODELS.text,
+          humanInTheLoop: true,
           position: { x: 450, y: 430 }
         }
       ]
