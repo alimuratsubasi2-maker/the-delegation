@@ -162,6 +162,8 @@ async function publishSnapshot() {
     useLiveStore.setState({ lastSentAt: Date.now(), lastError: null });
   } catch (e) {
     useLiveStore.setState({ lastError: e instanceof Error ? e.message : String(e) });
+    // A lost snapshot leaves the phone stale until the next change: try again shortly
+    setTimeout(schedulePublish, 30000);
   }
 }
 
